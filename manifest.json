@@ -1,0 +1,14 @@
+{
+  "name": "Minha Estante de Leituras",
+  "short_name": "Minha Estante",
+  "description": "Registre seus livros lidos por mês com capa, datas e páginas.",
+  "start_url": "./estante-leituras.html",
+  "display": "standalone",
+  "background_color": "#f5ede0",
+  "theme_color": "#3d1f0a",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
