@@ -340,10 +340,10 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="fav-toggle">
-        <input type="checkbox" id="inp-fav">
-        ❤️ Marcar como favorito do mês
-      </label>
+      <div class="fav-toggle" onclick="document.getElementById('inp-fav').checked=!document.getElementById('inp-fav').checked">
+        <input type="checkbox" id="inp-fav" onclick="event.stopPropagation()">
+        <span>❤️ Marcar como favorito do mês</span>
+      </div>
     </div>
     <div class="form-group">
       <label>Cor da capa (se sem imagem)</label>
@@ -583,7 +583,7 @@
     const status=document.getElementById('inp-status').value;
     const progress=status==='andamento'?parseInt(document.getElementById('inp-progress').value)||0:(status==='lido'?100:0);
     const fav=document.getElementById('inp-fav').checked;
-    const book={ id:Date.now(), title, author:document.getElementById('inp-author').value.trim(), genre:document.getElementById('inp-genre').value, cover:getCurrentCover(), start:document.getElementById('inp-start').value, end:document.getElementById('inp-end').value, pages:parseInt(document.getElementById('inp-pages').value)||0, color:selectedColor, month:addingMonth, status, progress, stars:selectedStars, fav:document.getElementById('inp-fav').checked };
+    const book={ id:Date.now(), title, author:document.getElementById('inp-author').value.trim(), genre:document.getElementById('inp-genre').value, cover:getCurrentCover(), start:document.getElementById('inp-start').value, end:document.getElementById('inp-end').value, pages:parseInt(document.getElementById('inp-pages').value)||0, color:selectedColor, month:addingMonth, status, progress, stars:selectedStars, fav };
     const books=loadBooks(currentYear);
     if(editingId){
       const idx=books.findIndex(b=>b.id===editingId);
