@@ -209,6 +209,14 @@
   }
   .pages-bubble.visible { opacity:1; transform:translateY(0); }
   .pages-bubble span { color:var(--gold); font-family:'Playfair Display',serif; font-size:.82rem; font-weight:700; }
+
+  /* ── Move month ── */
+  #move-month-group { display:none; }
+  .move-month-row { display:flex; gap:8px; }
+  .move-month-row select { flex:1; }
+  .btn-move { padding:9px 14px; background:var(--accent); color:white; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; cursor:pointer; white-space:nowrap; transition:background .2s; }
+  .btn-move:hover { background:var(--wood-dark); }
+  .edit-only { display:none; }
   @media(max-width:600px){ .months-grid{grid-template-columns:1fr;gap:40px;} .stats-bar{gap:10px;} }
 </style>
 </head>
@@ -348,6 +356,26 @@
     <div class="form-group">
       <label>Cor da capa (se sem imagem)</label>
       <div class="color-picker-row" id="color-picker"></div>
+    </div>
+    <div class="form-group edit-only" id="move-month-group">
+      <label>Mover para outro mês</label>
+      <div class="move-month-row">
+        <select id="inp-move-month">
+        <option value="0">Janeiro</option>
+        <option value="1">Fevereiro</option>
+        <option value="2">Março</option>
+        <option value="3">Abril</option>
+        <option value="4">Maio</option>
+        <option value="5">Junho</option>
+        <option value="6">Julho</option>
+        <option value="7">Agosto</option>
+        <option value="8">Setembro</option>
+        <option value="9">Outubro</option>
+        <option value="10">Novembro</option>
+        <option value="11">Dezembro</option>
+        </select>
+        <button type="button" class="btn-move" onclick="moveBook()">↪ Mover</button>
+      </div>
     </div>
     <button class="btn-primary" onclick="saveBook()">💾 Salvar na Estante</button>
   </div>
@@ -502,6 +530,7 @@
   function openModal(month){
     editingId=null;
     document.querySelector('#modal-overlay .modal h2').textContent='Adicionar Livro';
+    document.getElementById('move-month-group').style.display='none';
     addingMonth=month; uploadedBase64=null; activeTab='upload';
     ['inp-title','inp-author','inp-cover','inp-start','inp-end','inp-pages'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('inp-genre').value='';
@@ -522,6 +551,25 @@
   }
   function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); editingId=null; }
 
+  function moveBook(){
+    if(!editingId) return;
+    const newMonth=parseInt(document.getElementById('inp-move-month').value);
+    const books=loadBooks(currentYear);
+    const idx=books.findIndex(b=>b.id===editingId);
+    if(idx>=0 && books[idx].month!==newMonth){
+      books[idx].month=newMonth;
+      addingMonth=newMonth;
+      saveBooks(currentYear,books);
+      // Update select to reflect move
+      document.getElementById('inp-move-month').value=newMonth;
+      // Visual feedback
+      const btn=document.querySelector('.btn-move');
+      btn.textContent='✓ Movido!'; btn.style.background='#3a5c3a';
+      setTimeout(()=>{ btn.textContent='↪ Mover'; btn.style.background=''; },1800);
+      render();
+    }
+  }
+
   function openEditModal(book){
     editingId=book.id;
     addingMonth=book.month;
@@ -539,6 +587,9 @@
     document.getElementById('progress-label').textContent=(book.progress||0)+'%';
     document.getElementById('progress-group').style.display=(book.status==='andamento')?'':'none';
     document.getElementById('inp-fav').checked=!!book.fav;
+    // Show move month field and set to current month
+    document.getElementById('move-month-group').style.display='';
+    document.getElementById('inp-move-month').value=book.month;
 
     // Stars
     selectedStars=book.stars||0;
