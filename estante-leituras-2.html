@@ -113,6 +113,31 @@
   .popup-genre { font-size:.66rem; opacity:.65; margin-bottom:5px; }
   .popup-dates { font-size:.66rem; opacity:.7; }
   .popup-pages { color:var(--gold); font-weight:500; }
+  .popup-progress { margin-top:5px; }
+  .popup-progress-bar { height:5px; background:rgba(255,255,255,.15); border-radius:3px; overflow:hidden; margin-top:3px; }
+  .popup-progress-fill { height:100%; border-radius:3px; background:var(--gold); transition:width .4s; }
+
+  /* ── Stars & Favorite ── */
+  .star-row { display:flex; gap:4px; margin-bottom:2px; }
+  .star-btn { background:none; border:none; font-size:1.3rem; cursor:pointer; color:#d4b896; transition:color .15s,transform .15s; padding:0; line-height:1; }
+  .star-btn.active, .star-btn:hover { color:var(--gold); transform:scale(1.2); }
+  .fav-toggle { display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; font-size:.82rem; color:var(--wood-mid); margin-top:4px; }
+  .fav-toggle input { width:auto; accent-color:var(--accent); width:16px; height:16px; cursor:pointer; }
+  .fav-badge { position:absolute; top:-5px; right:14px; font-size:.9rem; z-index:11; filter:drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+  .stars-display { font-size:.6rem; letter-spacing:1px; color:var(--gold); margin-top:2px; }
+  .popup-stars { color:var(--gold); font-size:.8rem; margin-bottom:3px; }
+  .popup-fav { color:#ff6b6b; font-size:.72rem; font-weight:600; margin-bottom:4px; }
+  /* ── Status badge ── */
+  .status-badge { position:absolute; top:-5px; left:-5px; font-size:.55rem; font-weight:700; padding:2px 5px; border-radius:6px; letter-spacing:.04em; text-transform:uppercase; z-index:10; white-space:nowrap; }
+  .status-lido { background:#3a5c3a; color:#d4f5d4; }
+  .status-andamento { background:#c8602a; color:#fff3ee; }
+  .status-quero { background:#2c4a6e; color:#d4e8ff; }
+
+  /* ── Progress ring overlay on cover ── */
+  .progress-overlay { position:absolute; bottom:2px; left:0; right:0; display:flex; flex-direction:column; align-items:center; pointer-events:none; }
+  .progress-bar-cover { width:70%; height:4px; background:rgba(0,0,0,.3); border-radius:2px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:var(--gold); border-radius:2px; }
+  .progress-pct { font-size:.5rem; color:white; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.8); margin-top:1px; }
 
   .add-book-btn { width:76px; height:114px; border:2px dashed rgba(139,69,19,.3); border-radius:4px; background:transparent; cursor:pointer; color:rgba(139,69,19,.4); font-size:1.5rem; transition:all .2s; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .add-book-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(200,96,42,.06); transform:translateY(-4px); }
@@ -120,6 +145,9 @@
 
   .book-card .remove-btn { position:absolute; top:-6px; right:-6px; width:18px; height:18px; background:var(--accent); color:white; border:none; border-radius:50%; font-size:.6rem; cursor:pointer; display:none; align-items:center; justify-content:center; z-index:10; }
   .edit-mode .book-card .remove-btn { display:flex; }
+  .edit-mode .book-card { cursor:pointer; }
+  .edit-mode .book-card::after { content:'✏️'; position:absolute; bottom:28px; left:50%; transform:translateX(-50%); font-size:.7rem; opacity:0; transition:opacity .2s; pointer-events:none; }
+  .edit-mode .book-card:hover::after { opacity:1; }
 
   .edit-toggle { position:fixed; bottom:calc(28px + var(--safe-bottom)); right:20px; background:var(--wood-dark); color:var(--cream); border:none; border-radius:50px; padding:12px 20px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; box-shadow:0 4px 20px rgba(0,0,0,.3); transition:background .2s; z-index:500; }
   .edit-toggle:hover,.edit-toggle.active { background:var(--accent); }
@@ -167,6 +195,20 @@
   .btn-primary { width:100%; padding:13px; background:var(--wood-dark); color:var(--cream); border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.92rem; font-weight:500; cursor:pointer; margin-top:6px; transition:background .2s; }
   .btn-primary:hover { background:var(--accent); }
 
+
+  /* ── Pages bubble ── */
+  .shelf-footer { display:flex; justify-content:flex-end; margin-top:10px; padding-right:4px; }
+  .pages-bubble {
+    background:var(--wood-dark); color:var(--cream);
+    border-radius:50px; padding:5px 12px;
+    font-size:.65rem; font-weight:500; letter-spacing:.04em;
+    display:flex; align-items:center; gap:5px;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+    opacity:0; transform:translateY(4px);
+    transition:opacity .3s,transform .3s;
+  }
+  .pages-bubble.visible { opacity:1; transform:translateY(0); }
+  .pages-bubble span { color:var(--gold); font-family:'Playfair Display',serif; font-size:.82rem; font-weight:700; }
   @media(max-width:600px){ .months-grid{grid-template-columns:1fr;gap:40px;} .stats-bar{gap:10px;} }
 </style>
 </head>
@@ -195,7 +237,7 @@
 <div class="stats-bar">
   <div class="stat"><span class="stat-number" id="total-books">0</span><span class="stat-label">livros</span></div>
   <div class="stat"><span class="stat-number" id="total-pages">0</span><span class="stat-label">páginas</span></div>
-  <div class="stat"><span class="stat-number" id="best-month">—</span><span class="stat-label">melhor mês</span></div>
+  <div class="stat"><span class="stat-number" id="best-month">—</span><span class="stat-label">+ páginas lidas</span></div>
 </div>
 
 <div class="insights-panel">
@@ -274,6 +316,36 @@
       <input type="number" id="inp-pages" placeholder="ex: 320" min="1">
     </div>
     <div class="form-group">
+      <label>Status</label>
+      <select id="inp-status" onchange="toggleProgressField()">
+        <option value="lido">✅ Lido</option>
+        <option value="andamento">📖 Em andamento</option>
+        <option value="quero">🔖 Quero ler</option>
+      </select>
+    </div>
+    <div class="form-group" id="progress-group" style="display:none">
+      <label>Progresso — <span id="progress-label">0%</span></label>
+      <input type="range" id="inp-progress" min="0" max="100" value="0"
+        oninput="document.getElementById('progress-label').textContent=this.value+'%'"
+        style="padding:4px 0; accent-color:var(--accent);">
+    </div>
+    <div class="form-group">
+      <label>Avaliação</label>
+      <div class="star-row" id="star-row">
+        <button type="button" class="star-btn" data-v="1" onclick="setStars(1)">★</button>
+        <button type="button" class="star-btn" data-v="2" onclick="setStars(2)">★</button>
+        <button type="button" class="star-btn" data-v="3" onclick="setStars(3)">★</button>
+        <button type="button" class="star-btn" data-v="4" onclick="setStars(4)">★</button>
+        <button type="button" class="star-btn" data-v="5" onclick="setStars(5)">★</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="fav-toggle">
+        <input type="checkbox" id="inp-fav">
+        ❤️ Marcar como favorito do mês
+      </label>
+    </div>
+    <div class="form-group">
       <label>Cor da capa (se sem imagem)</label>
       <div class="color-picker-row" id="color-picker"></div>
     </div>
@@ -289,7 +361,7 @@
   const COLORS=['#6b3a1f','#2c4a6e','#3a5c3a','#6e2c2c','#4a3a6e','#6e5c2c','#2c5c5c','#6e3a5c','#3a4a2c','#5c4a3a','#2c3a6e','#6e4a2c'];
 
   let currentYear=2026, addingMonth=null, selectedColor=COLORS[0];
-  let editMode=false, uploadedBase64=null, activeTab='upload';
+  let editMode=false, uploadedBase64=null, activeTab='upload', editingId=null;
 
   function storageKey(y){ return 'shelf_v2_'+y; }
   function loadBooks(y){ try{ return JSON.parse(localStorage.getItem(storageKey(y)))||[]; }catch{ return []; } }
@@ -410,10 +482,35 @@
     });
   }
 
+
+  let selectedStars = 0;
+  function setStars(n){
+    selectedStars = n;
+    document.querySelectorAll('#star-row .star-btn').forEach(b=>{
+      b.classList.toggle('active', parseInt(b.dataset.v) <= n);
+    });
+  }
+  function resetStars(){
+    selectedStars = 0;
+    document.querySelectorAll('#star-row .star-btn').forEach(b=>b.classList.remove('active'));
+  }
+  function toggleProgressField(){
+    const s=document.getElementById('inp-status').value;
+    document.getElementById('progress-group').style.display=s==='andamento'?'':'none';
+  }
+
   function openModal(month){
+    editingId=null;
+    document.querySelector('#modal-overlay .modal h2').textContent='Adicionar Livro';
     addingMonth=month; uploadedBase64=null; activeTab='upload';
     ['inp-title','inp-author','inp-cover','inp-start','inp-end','inp-pages'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('inp-genre').value='';
+    document.getElementById('inp-status').value='lido';
+    document.getElementById('inp-progress').value=0;
+    document.getElementById('progress-label').textContent='0%';
+    document.getElementById('progress-group').style.display='none';
+    document.getElementById('inp-fav').checked=false;
+    resetStars();
     clearUpload();
     document.getElementById('tab-upload').style.display='';
     document.getElementById('tab-url').style.display='none';
@@ -423,7 +520,53 @@
     buildColorPicker(); updatePreview();
     document.getElementById('modal-overlay').classList.add('open');
   }
-  function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+  function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); editingId=null; }
+
+  function openEditModal(book){
+    editingId=book.id;
+    addingMonth=book.month;
+    document.querySelector('#modal-overlay .modal h2').textContent='✏️ Editar Livro';
+    uploadedBase64=null; activeTab='url';
+
+    document.getElementById('inp-title').value=book.title||'';
+    document.getElementById('inp-author').value=book.author||'';
+    document.getElementById('inp-genre').value=book.genre||'';
+    document.getElementById('inp-start').value=book.start||'';
+    document.getElementById('inp-end').value=book.end||'';
+    document.getElementById('inp-pages').value=book.pages||'';
+    document.getElementById('inp-status').value=book.status||'lido';
+    document.getElementById('inp-progress').value=book.progress||0;
+    document.getElementById('progress-label').textContent=(book.progress||0)+'%';
+    document.getElementById('progress-group').style.display=(book.status==='andamento')?'':'none';
+    document.getElementById('inp-fav').checked=!!book.fav;
+
+    // Stars
+    selectedStars=book.stars||0;
+    document.querySelectorAll('#star-row .star-btn').forEach(b=>{
+      b.classList.toggle('active', parseInt(b.dataset.v)<=selectedStars);
+    });
+
+    // Cover
+    clearUpload();
+    if(book.cover){
+      document.getElementById('tab-upload').style.display='none';
+      document.getElementById('tab-url').style.display='';
+      document.getElementById('tab-btn-upload').classList.remove('active');
+      document.getElementById('tab-btn-url').classList.add('active');
+      document.getElementById('inp-cover').value=book.cover;
+    } else {
+      document.getElementById('tab-upload').style.display='';
+      document.getElementById('tab-url').style.display='none';
+      document.getElementById('tab-btn-upload').classList.add('active');
+      document.getElementById('tab-btn-url').classList.remove('active');
+      activeTab='upload';
+    }
+
+    selectedColor=book.color||COLORS[0];
+    buildColorPicker();
+    updatePreview();
+    document.getElementById('modal-overlay').classList.add('open');
+  }
 
   function updatePreview(){
     const title=document.getElementById('inp-title').value||'Título';
@@ -437,8 +580,18 @@
   function saveBook(){
     const title=document.getElementById('inp-title').value.trim();
     if(!title){ alert('Informe o título do livro.'); return; }
-    const book={ id:Date.now(), title, author:document.getElementById('inp-author').value.trim(), genre:document.getElementById('inp-genre').value, cover:getCurrentCover(), start:document.getElementById('inp-start').value, end:document.getElementById('inp-end').value, pages:parseInt(document.getElementById('inp-pages').value)||0, color:selectedColor, month:addingMonth };
-    const books=loadBooks(currentYear); books.push(book); saveBooks(currentYear,books);
+    const status=document.getElementById('inp-status').value;
+    const progress=status==='andamento'?parseInt(document.getElementById('inp-progress').value)||0:(status==='lido'?100:0);
+    const fav=document.getElementById('inp-fav').checked;
+    const book={ id:Date.now(), title, author:document.getElementById('inp-author').value.trim(), genre:document.getElementById('inp-genre').value, cover:getCurrentCover(), start:document.getElementById('inp-start').value, end:document.getElementById('inp-end').value, pages:parseInt(document.getElementById('inp-pages').value)||0, color:selectedColor, month:addingMonth, status, progress, stars:selectedStars, fav:document.getElementById('inp-fav').checked };
+    const books=loadBooks(currentYear);
+    if(editingId){
+      const idx=books.findIndex(b=>b.id===editingId);
+      if(idx>=0){ book.id=editingId; books[idx]=book; }
+    } else {
+      books.push(book);
+    }
+    saveBooks(currentYear,books);
     closeModal(); render();
   }
 
@@ -467,9 +620,9 @@
     const grid=document.getElementById('months-grid'); grid.innerHTML='';
     const total=books.length;
     const pages=books.reduce((s,b)=>s+(b.pages||0),0);
-    const byCounts=MONTHS.map((_,i)=>books.filter(b=>b.month===i).length);
-    const maxC=Math.max(...byCounts,0);
-    const bestIdx=maxC>0?byCounts.indexOf(maxC):-1;
+    const byPages=MONTHS.map((_,i)=>books.filter(b=>b.month===i).reduce((s,b)=>s+(b.pages||0),0));
+    const maxC=Math.max(...byPages,0);
+    const bestIdx=maxC>0?byPages.indexOf(maxC):-1;
     document.getElementById('total-books').textContent=total;
     document.getElementById('total-pages').textContent=pages.toLocaleString('pt-BR');
     document.getElementById('best-month').textContent=bestIdx>=0?MONTHS[bestIdx].slice(0,3):'—';
@@ -479,7 +632,9 @@
       const monthBooks=books.filter(b=>b.month===mi);
       const unit=document.createElement('div'); unit.className='month-unit';
       const countLabel=monthBooks.length>0?monthBooks.length+' livro'+(monthBooks.length>1?'s':''):'nenhum livro';
-      unit.innerHTML=`<div class="month-label">${month}<span class="month-count">${countLabel}</span></div><div class="shelf-wrap"><div class="books-row" data-mi="${mi}"></div><div class="shelf-plank"></div></div>`;
+      const monthPages=monthBooks.reduce((s,b)=>s+(b.pages||0),0);
+      const bubbleHTML=monthPages>0?`<div class="shelf-footer"><div class="pages-bubble visible"><span>${monthPages.toLocaleString('pt-BR')}</span> páginas lidas</div></div>`:`<div class="shelf-footer"><div class="pages-bubble"></div></div>`;
+      unit.innerHTML=`<div class="month-label">${month}<span class="month-count">${countLabel}</span></div><div class="shelf-wrap"><div class="books-row" data-mi="${mi}"></div><div class="shelf-plank"></div></div>${bubbleHTML}`;
       grid.appendChild(unit);
       const row=unit.querySelector('[data-mi="'+mi+'"]');
 
@@ -488,6 +643,7 @@
       } else {
         monthBooks.forEach(book=>{
           const card=document.createElement('div'); card.className='book-card';
+          card.onclick=()=>{ if(editMode) openEditModal(book); };
           const startFmt=formatDate(book.start), endFmt=formatDate(book.end);
           const daysRead=(book.start&&book.end)?Math.ceil((new Date(book.end)-new Date(book.start))/86400000)+' dias':'';
           if(book.cover){
@@ -504,9 +660,36 @@
           if(startFmt!=='—') meta.innerHTML+=`<div>${startFmt} → ${endFmt}</div>`;
           if(book.pages) meta.innerHTML+=`<div>${book.pages.toLocaleString('pt-BR')} pág.</div>`;
           card.appendChild(meta);
+
+          // Status badge
+          const status=book.status||'lido';
+          const badgeMap={lido:['✅','status-lido'],andamento:['📖','status-andamento'],quero:['🔖','status-quero']};
+          const [badgeIcon,badgeClass]=badgeMap[status];
+          const badge=document.createElement('div');
+          badge.className=`status-badge ${badgeClass}`;
+          badge.textContent=badgeIcon;
+          card.appendChild(badge);
+
+          // Progress overlay for "em andamento"
+          if(status==='andamento' && book.progress>0){
+            const overlay=document.createElement('div'); overlay.className='progress-overlay';
+            overlay.innerHTML=`<div class="progress-bar-cover"><div class="progress-bar-fill" style="width:${book.progress}%"></div></div><div class="progress-pct">${book.progress}%</div>`;
+            card.appendChild(overlay);
+          }
           const popup=document.createElement('div'); popup.className='book-info-popup';
-          popup.innerHTML=`<div class="popup-title">${book.title}</div>${book.author?`<div class="popup-author">por ${book.author}</div>`:''}${book.genre?`<div class="popup-genre">📖 ${book.genre}</div>`:''}<div class="popup-dates">${startFmt!=='—'?`📅 ${startFmt} → ${endFmt}`:''}${daysRead?`<br>⏱ ${daysRead}`:''}</div>${book.pages?`<div class="popup-pages">📄 ${book.pages.toLocaleString('pt-BR')} páginas</div>`:''}`;
+          const statusLabel={lido:'✅ Lido',andamento:'📖 Em andamento',quero:'🔖 Quero ler'}[status];
+          const progressHTML=(status==='andamento'&&book.progress>0)?`<div class="popup-progress">📊 ${book.progress}%<div class="popup-progress-bar"><div class="popup-progress-fill" style="width:${book.progress}%"></div></div></div>`:'';
+          popup.innerHTML=`<div class="popup-title">${book.title}</div>${book.author?`<div class="popup-author">por ${book.author}</div>`:''}${book.genre?`<div class="popup-genre">📖 ${book.genre}</div>`:''}<div class="popup-dates">${startFmt!=='—'?`📅 ${startFmt} → ${endFmt}`:''}${daysRead?`<br>⏱ ${daysRead}`:''}</div>${book.pages?`<div class="popup-pages">📄 ${book.pages.toLocaleString('pt-BR')} páginas</div>`:''}${progressHTML}${book.stars?`<div class="popup-stars">${'★'.repeat(book.stars)+'☆'.repeat(5-book.stars)}</div>`:''}${book.fav?'<div class="popup-fav">❤️ Favorito do mês</div>':'' }<div style="font-size:.65rem;opacity:.6;margin-top:4px">${statusLabel}</div>`;
           card.appendChild(popup);
+          // Fav badge
+          if(book.fav){
+            const favBadge=document.createElement('div'); favBadge.className='fav-badge'; favBadge.textContent='❤️'; card.appendChild(favBadge);
+          }
+          // Stars below cover
+          if(book.stars>0){
+            const starsEl=document.createElement('div'); starsEl.className='stars-display';
+            starsEl.textContent='★'.repeat(book.stars)+'☆'.repeat(5-book.stars); meta.appendChild(starsEl);
+          }
           const rm=document.createElement('button'); rm.className='remove-btn'; rm.title='Remover'; rm.textContent='✕';
           rm.onclick=e=>{ e.stopPropagation(); removeBook(book.id); }; card.appendChild(rm);
           row.appendChild(card);
