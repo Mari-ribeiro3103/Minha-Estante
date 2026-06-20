@@ -65,6 +65,24 @@
   .stat-number { font-family:'Playfair Display',serif; font-size:1.7rem; color:var(--gold); display:block; }
   .stat-label { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; opacity:.8; }
 
+  /* ── Status summary pills ── */
+  .status-summary { max-width:860px; margin:0 auto 30px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .status-pill {
+    flex:1; min-width:150px; max-width:230px;
+    display:flex; align-items:center; gap:10px;
+    background:white; border-radius:12px; padding:10px 14px;
+    box-shadow:0 2px 10px rgba(60,30,10,.08);
+    border-left:4px solid transparent;
+  }
+  .status-pill-lido { border-left-color:#3a5c3a; }
+  .status-pill-andamento { border-left-color:#c8602a; }
+  .status-pill-quero { border-left-color:#2c4a6e; }
+  .status-pill-icon { font-size:1.3rem; }
+  .status-pill-info { display:flex; flex-direction:column; flex:1; line-height:1.2; }
+  .status-pill-count { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; color:var(--wood-dark); }
+  .status-pill-label { font-size:.65rem; color:var(--wood-mid); letter-spacing:.03em; text-transform:uppercase; }
+  .status-pill-pct { font-size:.85rem; font-weight:700; color:var(--accent); }
+
   /* ── Insights ── */
   .insights-panel { max-width:860px; margin:0 auto 50px; background:var(--wood-dark); border-radius:12px; padding:18px 20px; color:var(--cream); }
   .insights-title { font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold); margin-bottom:14px; }
@@ -134,8 +152,8 @@
   .status-quero { background:#2c4a6e; color:#d4e8ff; }
 
   /* ── Progress ring overlay on cover ── */
-  .progress-overlay { position:absolute; bottom:2px; left:0; right:0; display:flex; flex-direction:column; align-items:center; pointer-events:none; }
-  .progress-bar-cover { width:70%; height:4px; background:rgba(0,0,0,.3); border-radius:2px; overflow:hidden; }
+  .progress-overlay { position:absolute; top:4px; left:0; right:0; display:flex; flex-direction:column; align-items:center; pointer-events:none; }
+  .progress-bar-cover { width:70%; height:4px; background:rgba(0,0,0,.35); border-radius:2px; overflow:hidden; }
   .progress-bar-fill { height:100%; background:var(--gold); border-radius:2px; }
   .progress-pct { font-size:.5rem; color:white; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.8); margin-top:1px; }
 
@@ -242,9 +260,35 @@
 </header>
 
 <div class="stats-bar">
-  <div class="stat"><span class="stat-number" id="total-books">0</span><span class="stat-label">livros</span></div>
-  <div class="stat"><span class="stat-number" id="total-pages">0</span><span class="stat-label">páginas</span></div>
+  <div class="stat"><span class="stat-number" id="total-pages">0</span><span class="stat-label">páginas lidas</span></div>
   <div class="stat"><span class="stat-number" id="best-month">—</span><span class="stat-label">+ páginas lidas</span></div>
+</div>
+
+<div class="status-summary" id="status-summary">
+  <div class="status-pill status-pill-lido">
+    <span class="status-pill-icon">✅</span>
+    <div class="status-pill-info">
+      <span class="status-pill-count" id="count-lido">0</span>
+      <span class="status-pill-label">Lidos</span>
+    </div>
+    <span class="status-pill-pct" id="pct-lido">0%</span>
+  </div>
+  <div class="status-pill status-pill-andamento">
+    <span class="status-pill-icon">📖</span>
+    <div class="status-pill-info">
+      <span class="status-pill-count" id="count-andamento">0</span>
+      <span class="status-pill-label">Em andamento</span>
+    </div>
+    <span class="status-pill-pct" id="pct-andamento">0%</span>
+  </div>
+  <div class="status-pill status-pill-quero">
+    <span class="status-pill-icon">🔖</span>
+    <div class="status-pill-info">
+      <span class="status-pill-count" id="count-quero">0</span>
+      <span class="status-pill-label">Quero ler</span>
+    </div>
+    <span class="status-pill-pct" id="pct-quero">0%</span>
+  </div>
 </div>
 
 <div class="insights-panel">
@@ -331,10 +375,18 @@
       </select>
     </div>
     <div class="form-group" id="progress-group" style="display:none">
-      <label>Progresso — <span id="progress-label">0%</span></label>
-      <input type="range" id="inp-progress" min="0" max="100" value="0"
-        oninput="document.getElementById('progress-label').textContent=this.value+'%'"
-        style="padding:4px 0; accent-color:var(--accent);">
+      <label>Progresso de leitura</label>
+      <div class="form-row">
+        <div>
+          <label style="font-weight:400;text-transform:none;font-size:.68rem">Página atual</label>
+          <input type="number" id="inp-progress-current" min="0" placeholder="ex: 120" oninput="updateProgressLabel()">
+        </div>
+        <div>
+          <label style="font-weight:400;text-transform:none;font-size:.68rem">Total de páginas</label>
+          <input type="number" id="inp-progress-total" min="1" placeholder="ex: 320" oninput="updateProgressLabel()">
+        </div>
+      </div>
+      <div id="progress-label" style="font-size:.72rem;color:var(--wood-mid);margin-top:6px;text-align:right">0%</div>
     </div>
     <div class="form-group">
       <label>Avaliação</label>
@@ -525,6 +577,12 @@
     const s=document.getElementById('inp-status').value;
     document.getElementById('progress-group').style.display=s==='andamento'?'':'none';
   }
+  function updateProgressLabel(){
+    const cur=parseInt(document.getElementById('inp-progress-current').value)||0;
+    const tot=parseInt(document.getElementById('inp-progress-total').value)||0;
+    const pct=tot>0?Math.min(100,Math.round(cur/tot*100)):0;
+    document.getElementById('progress-label').textContent=tot>0?`${cur} de ${tot} páginas — ${pct}%`:'0%';
+  }
 
   function openModal(month){
     editingId=null;
@@ -534,7 +592,8 @@
     ['inp-title','inp-author','inp-cover','inp-start','inp-end','inp-pages'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('inp-genre').value='';
     document.getElementById('inp-status').value='lido';
-    document.getElementById('inp-progress').value=0;
+    document.getElementById('inp-progress-current').value='';
+    document.getElementById('inp-progress-total').value='';
     document.getElementById('progress-label').textContent='0%';
     document.getElementById('progress-group').style.display='none';
     document.getElementById('inp-fav').checked=false;
@@ -582,8 +641,9 @@
     document.getElementById('inp-end').value=book.end||'';
     document.getElementById('inp-pages').value=book.pages||'';
     document.getElementById('inp-status').value=book.status||'lido';
-    document.getElementById('inp-progress').value=book.progress||0;
-    document.getElementById('progress-label').textContent=(book.progress||0)+'%';
+    document.getElementById('inp-progress-current').value=book.progressCurrent||'';
+    document.getElementById('inp-progress-total').value=book.progressTotal||'';
+    updateProgressLabel();
     document.getElementById('progress-group').style.display=(book.status==='andamento')?'':'none';
     document.getElementById('inp-fav').checked=!!book.fav;
     // Show move month field and set to current month
@@ -631,9 +691,11 @@
     const title=document.getElementById('inp-title').value.trim();
     if(!title){ alert('Informe o título do livro.'); return; }
     const status=document.getElementById('inp-status').value;
-    const progress=status==='andamento'?parseInt(document.getElementById('inp-progress').value)||0:(status==='lido'?100:0);
+    const progCurrent=status==='andamento'?(parseInt(document.getElementById('inp-progress-current').value)||0):0;
+    const progTotal=status==='andamento'?(parseInt(document.getElementById('inp-progress-total').value)||0):0;
+    const progress=status==='andamento'?(progTotal>0?Math.min(100,Math.round(progCurrent/progTotal*100)):0):(status==='lido'?100:0);
     const fav=document.getElementById('inp-fav').checked;
-    const book={ id:Date.now(), title, author:document.getElementById('inp-author').value.trim(), genre:document.getElementById('inp-genre').value, cover:getCurrentCover(), start:document.getElementById('inp-start').value, end:document.getElementById('inp-end').value, pages:parseInt(document.getElementById('inp-pages').value)||0, color:selectedColor, month:addingMonth, status, progress, stars:selectedStars, fav };
+    const book={ id:Date.now(), title, author:document.getElementById('inp-author').value.trim(), genre:document.getElementById('inp-genre').value, cover:getCurrentCover(), start:document.getElementById('inp-start').value, end:document.getElementById('inp-end').value, pages:parseInt(document.getElementById('inp-pages').value)||0, color:selectedColor, month:addingMonth, status, progress, progressCurrent:progCurrent, progressTotal:progTotal, stars:selectedStars, fav };
     const books=loadBooks(currentYear);
     if(editingId){
       const idx=books.findIndex(b=>b.id===editingId);
@@ -669,20 +731,32 @@
     const books=loadBooks(currentYear);
     const grid=document.getElementById('months-grid'); grid.innerHTML='';
     const total=books.length;
-    const pages=books.reduce((s,b)=>s+(b.pages||0),0);
-    const byPages=MONTHS.map((_,i)=>books.filter(b=>b.month===i).reduce((s,b)=>s+(b.pages||0),0));
+    const pages=books.filter(b=>(b.status||'lido')==='lido').reduce((s,b)=>s+(b.pages||0),0);
+    const byPages=MONTHS.map((_,i)=>books.filter(b=>b.month===i&&(b.status||'lido')==='lido').reduce((s,b)=>s+(b.pages||0),0));
     const maxC=Math.max(...byPages,0);
     const bestIdx=maxC>0?byPages.indexOf(maxC):-1;
-    document.getElementById('total-books').textContent=total;
     document.getElementById('total-pages').textContent=pages.toLocaleString('pt-BR');
     document.getElementById('best-month').textContent=bestIdx>=0?MONTHS[bestIdx].slice(0,3):'—';
+
+    // Status breakdown
+    const countLido=books.filter(b=>(b.status||'lido')==='lido').length;
+    const countAndamento=books.filter(b=>b.status==='andamento').length;
+    const countQuero=books.filter(b=>b.status==='quero').length;
+    const totalForPct=total>0?total:1;
+    document.getElementById('count-lido').textContent=countLido;
+    document.getElementById('pct-lido').textContent=Math.round(countLido/totalForPct*100)+'%';
+    document.getElementById('count-andamento').textContent=countAndamento;
+    document.getElementById('pct-andamento').textContent=Math.round(countAndamento/totalForPct*100)+'%';
+    document.getElementById('count-quero').textContent=countQuero;
+    document.getElementById('pct-quero').textContent=Math.round(countQuero/totalForPct*100)+'%';
+
     renderInsights(books);
 
     MONTHS.forEach((month,mi)=>{
       const monthBooks=books.filter(b=>b.month===mi);
       const unit=document.createElement('div'); unit.className='month-unit';
       const countLabel=monthBooks.length>0?monthBooks.length+' livro'+(monthBooks.length>1?'s':''):'nenhum livro';
-      const monthPages=monthBooks.reduce((s,b)=>s+(b.pages||0),0);
+      const monthPages=monthBooks.filter(b=>(b.status||'lido')==='lido').reduce((s,b)=>s+(b.pages||0),0);
       const bubbleHTML=monthPages>0?`<div class="shelf-footer"><div class="pages-bubble visible"><span>${monthPages.toLocaleString('pt-BR')}</span> páginas lidas</div></div>`:`<div class="shelf-footer"><div class="pages-bubble"></div></div>`;
       unit.innerHTML=`<div class="month-label">${month}<span class="month-count">${countLabel}</span></div><div class="shelf-wrap"><div class="books-row" data-mi="${mi}"></div><div class="shelf-plank"></div></div>${bubbleHTML}`;
       grid.appendChild(unit);
@@ -728,7 +802,7 @@
           }
           const popup=document.createElement('div'); popup.className='book-info-popup';
           const statusLabel={lido:'✅ Lido',andamento:'📖 Em andamento',quero:'🔖 Quero ler'}[status];
-          const progressHTML=(status==='andamento'&&book.progress>0)?`<div class="popup-progress">📊 ${book.progress}%<div class="popup-progress-bar"><div class="popup-progress-fill" style="width:${book.progress}%"></div></div></div>`:'';
+          const progressHTML=(status==='andamento'&&book.progress>0)?`<div class="popup-progress">📊 ${book.progressCurrent||0} de ${book.progressTotal||0} páginas — ${book.progress}%<div class="popup-progress-bar"><div class="popup-progress-fill" style="width:${book.progress}%"></div></div></div>`:'';
           popup.innerHTML=`<div class="popup-title">${book.title}</div>${book.author?`<div class="popup-author">por ${book.author}</div>`:''}${book.genre?`<div class="popup-genre">📖 ${book.genre}</div>`:''}<div class="popup-dates">${startFmt!=='—'?`📅 ${startFmt} → ${endFmt}`:''}${daysRead?`<br>⏱ ${daysRead}`:''}</div>${book.pages?`<div class="popup-pages">📄 ${book.pages.toLocaleString('pt-BR')} páginas</div>`:''}${progressHTML}${book.stars?`<div class="popup-stars">${'★'.repeat(book.stars)+'☆'.repeat(5-book.stars)}</div>`:''}${book.fav?'<div class="popup-fav">❤️ Favorito do mês</div>':'' }<div style="font-size:.65rem;opacity:.6;margin-top:4px">${statusLabel}</div>`;
           card.appendChild(popup);
           // Fav badge
