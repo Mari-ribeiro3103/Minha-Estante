@@ -11,6 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <title>Minha Estante</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
   :root {
     --wood-dark:#3d1f0a; --wood-mid:#6b3a1f; --wood-light:#9c5a2e;
@@ -58,6 +59,16 @@
   .year-selector { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; flex-wrap:wrap; }
   .year-btn { background:var(--wood-dark); color:var(--cream); border:none; padding:6px 14px; border-radius:20px; cursor:pointer; font-size:.85rem; font-family:'DM Sans',sans-serif; transition:background .2s; }
   .year-btn:hover, .year-btn.active { background:var(--accent); }
+
+  /* ── Toolbar buttons ── */
+  .toolbar-buttons { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+  .tool-btn {
+    background:white; color:var(--wood-dark); border:1.5px solid var(--wood-light);
+    padding:8px 14px; border-radius:20px; cursor:pointer;
+    font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:500;
+    transition:all .2s; box-shadow:0 2px 6px rgba(60,30,10,.08);
+  }
+  .tool-btn:hover { background:var(--wood-dark); color:var(--cream); border-color:var(--wood-dark); }
 
   /* ── Stats ── */
   .stats-bar { display:flex; justify-content:center; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
@@ -234,6 +245,56 @@
   .move-month-row select { flex:1; }
   .btn-move { padding:9px 14px; background:var(--accent); color:white; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; cursor:pointer; white-space:nowrap; transition:background .2s; }
   .btn-move:hover { background:var(--wood-dark); }
+  /* ── Fullscreen modals ── */
+  .fullscreen-modal {
+    position:fixed; inset:0; background:var(--wall-bg); z-index:3000;
+    display:flex; flex-direction:column;
+    transform:translateY(100%); transition:transform .3s cubic-bezier(.34,1.1,.64,1);
+  }
+  .fullscreen-modal.open { transform:translateY(0); }
+  .fs-modal-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:calc(16px + var(--safe-top)) 20px 16px; background:var(--wood-dark); color:var(--cream);
+    flex-shrink:0;
+  }
+  .fs-modal-header h2 { font-family:'Playfair Display',serif; font-size:1.15rem; font-style:italic; }
+  .fs-close { background:rgba(255,255,255,.15); border:none; color:var(--cream); width:32px; height:32px; border-radius:50%; font-size:1.1rem; cursor:pointer; }
+  .fs-modal-body { flex:1; overflow-y:auto; padding:20px; padding-bottom:calc(20px + var(--safe-bottom)); }
+
+  /* ── Chart wrap ── */
+  .chart-wrap { max-width:900px; margin:0 auto; height:min(50vh,400px); background:white; border-radius:14px; padding:20px; box-shadow:0 4px 16px rgba(60,30,10,.08); }
+
+  /* ── Covers wall ── */
+  .covers-wall { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:14px; }
+  .wall-item { aspect-ratio:2/3; border-radius:4px 8px 8px 4px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,.25); transition:transform .2s; }
+  .wall-item:hover { transform:scale(1.05) translateY(-4px); }
+  .wall-item img { width:100%; height:100%; object-fit:cover; display:block; }
+  .wall-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:10px; text-align:center; font-family:'Playfair Display',serif; font-size:.7rem; color:white; line-height:1.3; }
+
+  /* ── Dashboard ── */
+  .dash-grid { max-width:900px; margin:0 auto 24px; display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; }
+  .dash-card { background:white; border-radius:12px; padding:16px 10px; text-align:center; box-shadow:0 2px 10px rgba(60,30,10,.08); }
+  .dash-icon { font-size:1.5rem; margin-bottom:6px; }
+  .dash-value { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:var(--wood-dark); }
+  .dash-label { font-size:.62rem; color:var(--wood-mid); text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
+  .dash-grid-wide { max-width:900px; margin:0 auto 24px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .dash-card-wide { background:var(--wood-dark); color:var(--cream); border-radius:12px; padding:18px; }
+  .dash-card-wide-title { font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; opacity:.65; margin-bottom:6px; }
+  .dash-card-wide-value { font-family:'Playfair Display',serif; font-size:1.15rem; font-style:italic; color:var(--gold); line-height:1.3; }
+  .dash-card-wide-sub { font-size:.72rem; opacity:.7; margin-top:4px; }
+  .dash-chart-section { max-width:900px; margin:0 auto; }
+  .dash-chart-section h3 { font-family:'Playfair Display',serif; font-size:1rem; color:var(--wood-dark); margin-bottom:12px; font-style:italic; }
+
+  /* ── Theme picker ── */
+  .theme-grid { max-width:700px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:16px; }
+  .theme-card { cursor:pointer; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(60,30,10,.1); border:3px solid transparent; transition:all .2s; }
+  .theme-card.active { border-color:var(--accent); transform:scale(1.03); }
+  .theme-card:hover { transform:scale(1.03); }
+  .theme-preview { height:90px; display:flex; align-items:flex-end; gap:6px; padding:10px; position:relative; }
+  .theme-preview-shelf { position:absolute; bottom:0; left:0; right:0; height:10px; }
+  .theme-preview-book { width:22px; height:45px; border-radius:2px 4px 4px 2px; position:relative; z-index:1; }
+  .theme-name { background:white; text-align:center; padding:8px; font-size:.78rem; font-weight:500; color:var(--wood-dark); }
+
   @media(max-width:600px){ .months-grid{grid-template-columns:1fr;gap:40px;} .stats-bar{gap:10px;} }
 </style>
 </head>
@@ -257,6 +318,12 @@
   <h1>📚 Minha Estante</h1>
   <p>Jornada de leituras</p>
   <div class="year-selector" id="year-selector"></div>
+  <div class="toolbar-buttons">
+    <button class="tool-btn" onclick="openChartModal()">📈 Gráfico mensal</button>
+    <button class="tool-btn" onclick="openWallModal()">🖼️ Parede de capas</button>
+    <button class="tool-btn" onclick="openDashboard()">📊 Dashboard anual</button>
+    <button class="tool-btn" onclick="openThemeModal()">🎨 Temas</button>
+  </div>
 </header>
 
 <div class="stats-bar">
@@ -434,7 +501,244 @@
 
 <button class="edit-toggle" id="edit-toggle" onclick="toggleEditMode()">✏️ Editar</button>
 
+<!-- ── Chart Modal ── -->
+<div class="fullscreen-modal" id="chart-modal">
+  <div class="fs-modal-header">
+    <h2>📈 Páginas lidas por mês</h2>
+    <button class="fs-close" onclick="closeFullscreen('chart-modal')">✕</button>
+  </div>
+  <div class="fs-modal-body">
+    <div class="chart-wrap"><canvas id="pages-chart"></canvas></div>
+  </div>
+</div>
+
+<!-- ── Wall of Covers Modal ── -->
+<div class="fullscreen-modal" id="wall-modal">
+  <div class="fs-modal-header">
+    <h2>🖼️ Parede de Capas</h2>
+    <button class="fs-close" onclick="closeFullscreen('wall-modal')">✕</button>
+  </div>
+  <div class="fs-modal-body">
+    <div class="covers-wall" id="covers-wall"></div>
+  </div>
+</div>
+
+<!-- ── Dashboard Modal ── -->
+<div class="fullscreen-modal" id="dashboard-modal">
+  <div class="fs-modal-header">
+    <h2>📊 Dashboard Anual <span id="dash-year-label"></span></h2>
+    <button class="fs-close" onclick="closeFullscreen('dashboard-modal')">✕</button>
+  </div>
+  <div class="fs-modal-body" id="dashboard-body"></div>
+</div>
+
+<!-- ── Theme Modal ── -->
+<div class="fullscreen-modal" id="theme-modal">
+  <div class="fs-modal-header">
+    <h2>🎨 Escolher Tema</h2>
+    <button class="fs-close" onclick="closeFullscreen('theme-modal')">✕</button>
+  </div>
+  <div class="fs-modal-body">
+    <div class="theme-grid" id="theme-grid"></div>
+  </div>
+</div>
+
 <script>
+  // ── Theme definitions ──
+  const THEMES = {
+    classic:  { name:'Clássico',     wood_dark:'#3d1f0a', wood_mid:'#6b3a1f', wood_light:'#9c5a2e', wall_bg:'#f5ede0', cream:'#fdf6ec', accent:'#c8602a', gold:'#c9963f', shelf_face:'#8B4513', shelf_top:'#a0522d' },
+    roxo:     { name:'Roxo & Dourado', wood_dark:'#2e1a4a', wood_mid:'#5a3a7a', wood_light:'#8a6ab0', wall_bg:'#f0e8f5', cream:'#faf5fc', accent:'#9c5fc9', gold:'#d4af37', shelf_face:'#4a2a6a', shelf_top:'#5e3680' },
+    rosa:     { name:'Rosa Suave',    wood_dark:'#5a2840', wood_mid:'#8a4a68', wood_light:'#c08aa0', wall_bg:'#fdeef2', cream:'#fff6f8', accent:'#d6688a', gold:'#e8a8a0', shelf_face:'#7a3a55', shelf_top:'#9a5070' },
+    verde:    { name:'Verde Floresta',wood_dark:'#1a3a2a', wood_mid:'#2e5c40', wood_light:'#5a8a6a', wall_bg:'#eef5ee', cream:'#f7fbf6', accent:'#4a8a5a', gold:'#c9a83f', shelf_face:'#2a4a35', shelf_top:'#386048' },
+    azul:     { name:'Azul Noturno',  wood_dark:'#1a2840', wood_mid:'#2e4468', wood_light:'#5a76a0', wall_bg:'#eaf0f8', cream:'#f5f8fc', accent:'#4a72c9', gold:'#c9b03f', shelf_face:'#243860', shelf_top:'#304a78' },
+    terra:    { name:'Terracota',     wood_dark:'#4a2418', wood_mid:'#7a3e28', wood_light:'#b06a48', wall_bg:'#faf0e6', cream:'#fff8f0', accent:'#d97f4a', gold:'#e0a83f', shelf_face:'#8a4530', shelf_top:'#a05a3a' },
+  };
+
+  function applyTheme(key){
+    const t = THEMES[key] || THEMES.classic;
+    const r = document.documentElement.style;
+    r.setProperty('--wood-dark', t.wood_dark);
+    r.setProperty('--wood-mid', t.wood_mid);
+    r.setProperty('--wood-light', t.wood_light);
+    r.setProperty('--wall-bg', t.wall_bg);
+    r.setProperty('--cream', t.cream);
+    r.setProperty('--accent', t.accent);
+    r.setProperty('--gold', t.gold);
+    r.setProperty('--shelf-face', t.shelf_face);
+    r.setProperty('--shelf-top', t.shelf_top);
+    localStorage.setItem('shelf_theme', key);
+  }
+
+  function openThemeModal(){
+    const grid=document.getElementById('theme-grid');
+    const current=localStorage.getItem('shelf_theme')||'classic';
+    grid.innerHTML=Object.entries(THEMES).map(([key,t])=>`
+      <div class="theme-card ${key===current?'active':''}" onclick="selectTheme('${key}')">
+        <div class="theme-preview" style="background:${t.wall_bg}">
+          <div class="theme-preview-shelf" style="background:${t.wood_dark}"></div>
+          <div class="theme-preview-book" style="background:${t.accent}"></div>
+          <div class="theme-preview-book" style="background:${t.gold}"></div>
+        </div>
+        <div class="theme-name">${t.name}</div>
+      </div>`).join('');
+    openFullscreen('theme-modal');
+  }
+  function selectTheme(key){
+    applyTheme(key);
+    openThemeModal();
+  }
+
+  // ── Fullscreen modal helpers ──
+  function openFullscreen(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeFullscreen(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+
+  // ── Chart: pages per month ──
+  let pagesChartInstance=null;
+  function openChartModal(){
+    const books=loadBooks(currentYear);
+    const data=MONTHS.map((_,i)=>books.filter(b=>b.month===i&&(b.status||'lido')==='lido').reduce((s,b)=>s+(b.pages||0),0));
+    const ctx=document.getElementById('pages-chart').getContext('2d');
+    if(pagesChartInstance) pagesChartInstance.destroy();
+    const styles=getComputedStyle(document.documentElement);
+    const accent=styles.getPropertyValue('--accent').trim();
+    const gold=styles.getPropertyValue('--gold').trim();
+    const woodDark=styles.getPropertyValue('--wood-dark').trim();
+    pagesChartInstance=new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels:MONTHS.map(m=>m.slice(0,3)),
+        datasets:[{
+          label:'Páginas lidas',
+          data,
+          backgroundColor:accent,
+          borderRadius:6,
+          maxBarThickness:38
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, title:{display:false} },
+        scales:{
+          y:{ beginAtZero:true, ticks:{color:woodDark}, grid:{color:'rgba(0,0,0,.06)'} },
+          x:{ ticks:{color:woodDark}, grid:{display:false} }
+        }
+      }
+    });
+    openFullscreen('chart-modal');
+  }
+
+  // ── Wall of covers ──
+  function openWallModal(){
+    const books=loadBooks(currentYear);
+    const wall=document.getElementById('covers-wall');
+    if(books.length===0){
+      wall.innerHTML='<p class="no-data" style="text-align:center;padding:40px">Nenhum livro cadastrado ainda em '+currentYear+'.</p>';
+    } else {
+      wall.innerHTML=books.map(b=>{
+        if(b.cover){
+          return `<div class="wall-item"><img src="${b.cover}" alt="${b.title}" loading="lazy"></div>`;
+        }
+        return `<div class="wall-item"><div class="wall-placeholder" style="background:${b.color}"><span>${b.title}</span></div></div>`;
+      }).join('');
+    }
+    openFullscreen('wall-modal');
+  }
+
+  // ── Dashboard ──
+  function openDashboard(){
+    const books=loadBooks(currentYear);
+    document.getElementById('dash-year-label').textContent=currentYear;
+    const lidos=books.filter(b=>(b.status||'lido')==='lido');
+    const andamento=books.filter(b=>b.status==='andamento');
+    const quero=books.filter(b=>b.status==='quero');
+    const totalPages=lidos.reduce((s,b)=>s+(b.pages||0),0);
+    const avgPages=lidos.length>0?Math.round(totalPages/lidos.length):0;
+
+    // Best month
+    const byPages=MONTHS.map((_,i)=>books.filter(b=>b.month===i&&(b.status||'lido')==='lido').reduce((s,b)=>s+(b.pages||0),0));
+    const maxP=Math.max(...byPages,0);
+    const bestIdx=maxP>0?byPages.indexOf(maxP):-1;
+
+    // Top author/genre
+    const authorMap={},genreMap={};
+    lidos.forEach(b=>{ if(b.author) authorMap[b.author]=(authorMap[b.author]||0)+1; if(b.genre) genreMap[b.genre]=(genreMap[b.genre]||0)+1; });
+    const topAuthor=Object.entries(authorMap).sort((a,b)=>b[1]-a[1])[0];
+    const topGenre=Object.entries(genreMap).sort((a,b)=>b[1]-a[1])[0];
+
+    // Avg stars
+    const starred=lidos.filter(b=>b.stars>0);
+    const avgStars=starred.length>0?(starred.reduce((s,b)=>s+b.stars,0)/starred.length).toFixed(1):'—';
+
+    // Longest book
+    const longest=lidos.length>0?lidos.reduce((a,b)=>(b.pages||0)>(a.pages||0)?b:a):null;
+
+    const body=document.getElementById('dashboard-body');
+    body.innerHTML=`
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dash-icon">📚</div><div class="dash-value">${books.length}</div><div class="dash-label">Total de livros</div></div>
+        <div class="dash-card"><div class="dash-icon">✅</div><div class="dash-value">${lidos.length}</div><div class="dash-label">Lidos</div></div>
+        <div class="dash-card"><div class="dash-icon">📖</div><div class="dash-value">${andamento.length}</div><div class="dash-label">Em andamento</div></div>
+        <div class="dash-card"><div class="dash-icon">🔖</div><div class="dash-value">${quero.length}</div><div class="dash-label">Quero ler</div></div>
+        <div class="dash-card"><div class="dash-icon">📄</div><div class="dash-value">${totalPages.toLocaleString('pt-BR')}</div><div class="dash-label">Páginas lidas</div></div>
+        <div class="dash-card"><div class="dash-icon">📏</div><div class="dash-value">${avgPages}</div><div class="dash-label">Média pág./livro</div></div>
+        <div class="dash-card"><div class="dash-icon">🏆</div><div class="dash-value">${bestIdx>=0?MONTHS[bestIdx].slice(0,3):'—'}</div><div class="dash-label">Melhor mês</div></div>
+        <div class="dash-card"><div class="dash-icon">⭐</div><div class="dash-value">${avgStars}</div><div class="dash-label">Média de estrelas</div></div>
+      </div>
+      <div class="dash-grid-wide">
+        <div class="dash-card-wide">
+          <div class="dash-card-wide-title">✍️ Autor mais lido</div>
+          <div class="dash-card-wide-value">${topAuthor?topAuthor[0]:'—'}</div>
+          ${topAuthor?`<div class="dash-card-wide-sub">${topAuthor[1]} livro${topAuthor[1]>1?'s':''}</div>`:''}
+        </div>
+        <div class="dash-card-wide">
+          <div class="dash-card-wide-title">📖 Gênero mais lido</div>
+          <div class="dash-card-wide-value">${topGenre?topGenre[0]:'—'}</div>
+          ${topGenre?`<div class="dash-card-wide-sub">${topGenre[1]} livro${topGenre[1]>1?'s':''}</div>`:''}
+        </div>
+        <div class="dash-card-wide">
+          <div class="dash-card-wide-title">📘 Maior livro lido</div>
+          <div class="dash-card-wide-value">${longest?longest.title:'—'}</div>
+          ${longest?`<div class="dash-card-wide-sub">${(longest.pages||0).toLocaleString('pt-BR')} páginas</div>`:''}
+        </div>
+      </div>
+      <div class="dash-chart-section">
+        <h3>📈 Páginas lidas por mês</h3>
+        <div class="chart-wrap" style="height:240px"><canvas id="dash-mini-chart"></canvas></div>
+      </div>
+    `;
+
+    openFullscreen('dashboard-modal');
+
+    setTimeout(()=>{
+      const ctx=document.getElementById('dash-mini-chart').getContext('2d');
+      const styles=getComputedStyle(document.documentElement);
+      const accent=styles.getPropertyValue('--accent').trim();
+      const woodDark=styles.getPropertyValue('--wood-dark').trim();
+      new Chart(ctx,{
+        type:'line',
+        data:{
+          labels:MONTHS.map(m=>m.slice(0,3)),
+          datasets:[{
+            label:'Páginas',
+            data:byPages,
+            borderColor:accent,
+            backgroundColor:accent+'33',
+            fill:true, tension:.35, pointRadius:4, pointBackgroundColor:accent
+          }]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{display:false} },
+          scales:{
+            y:{ beginAtZero:true, ticks:{color:woodDark}, grid:{color:'rgba(0,0,0,.06)'} },
+            x:{ ticks:{color:woodDark}, grid:{display:false} }
+          }
+        }
+      });
+    },50);
+  }
+
+
   const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const YEARS=[2026,2027,2028,2029,2030];
   const COLORS=['#6b3a1f','#2c4a6e','#3a5c3a','#6e2c2c','#4a3a6e','#6e5c2c','#2c5c5c','#6e3a5c','#3a4a2c','#5c4a3a','#2c3a6e','#6e4a2c'];
@@ -832,6 +1136,7 @@
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   }
 
+  applyTheme(localStorage.getItem('shelf_theme')||'classic');
   buildYearSelector(); render();
 </script>
 </body>
