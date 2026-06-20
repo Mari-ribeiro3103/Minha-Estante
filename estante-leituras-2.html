@@ -712,8 +712,9 @@
   }
 
   function renderInsights(books){
+    const lidos=books.filter(b=>(b.status||'lido')==='lido');
     const authorMap={},genreMap={};
-    books.forEach(b=>{ if(b.author) authorMap[b.author]=(authorMap[b.author]||0)+1; if(b.genre) genreMap[b.genre]=(genreMap[b.genre]||0)+1; });
+    lidos.forEach(b=>{ if(b.author) authorMap[b.author]=(authorMap[b.author]||0)+1; if(b.genre) genreMap[b.genre]=(genreMap[b.genre]||0)+1; });
     const authors=Object.entries(authorMap).sort((a,b)=>b[1]-a[1]);
     const genres=Object.entries(genreMap).sort((a,b)=>b[1]-a[1]);
     const medals=['🥇','🥈','🥉'];
