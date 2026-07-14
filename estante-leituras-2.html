@@ -314,89 +314,20 @@
   .story-style-swatch { width:36px; height:36px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:transform .15s,border-color .15s; }
   .story-style-swatch.selected, .story-style-swatch:hover { transform:scale(1.18); border-color:var(--wood-dark); }
 
-  /* ── Album & Sticker Cards ── */
-  .album-progress-bar-wrap { max-width:600px; margin:0 auto 24px; }
-  .album-progress-text { text-align:center; font-size:.85rem; color:var(--wood-dark); font-weight:600; margin-bottom:8px; }
-  .album-progress-track { height:14px; background:rgba(0,0,0,.08); border-radius:8px; overflow:hidden; box-shadow:inset 0 2px 4px rgba(0,0,0,.1); }
-  .album-progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--gold)); border-radius:8px; transition:width .6s ease; }
-
-  .album-grid {
-    max-width:1100px; margin:0 auto;
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:16px;
+  /* ── Leitura Finalizada ── */
+  .leitura-modal-body { display:flex; flex-direction:column; gap:20px; align-items:center; max-width:1000px; margin:0 auto; }
+  @media(min-width:760px){ .leitura-modal-body { flex-direction:row; align-items:flex-start; } }
+  .leitura-preview-wrap { width:100%; max-width:280px; flex-shrink:0; }
+  #leitura-canvas { width:100%; height:auto; border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,.3); display:block; }
+  .leitura-controls { width:100%; max-width:420px; }
+  .leitura-vale-row { display:flex; gap:8px; }
+  .leitura-vale-row button {
+    flex:1; padding:9px 8px; border-radius:8px; border:1.5px solid #d4b896;
+    background:white; color:var(--wood-mid); font-family:'DM Sans',sans-serif; font-size:.8rem;
+    font-weight:500; cursor:pointer; transition:all .18s;
   }
-
-  .sticker-card {
-    position:relative; aspect-ratio:5/7;
-    border-radius:10px; overflow:hidden; cursor:pointer;
-    transition:transform .2s, box-shadow .2s;
-    background:linear-gradient(160deg,#4ad9e8,#2c8a9e);
-    box-shadow:0 4px 14px rgba(0,0,0,.2);
-    border:3px solid #fff;
-  }
-  .sticker-card:hover { transform:translateY(-6px) scale(1.03); box-shadow:0 10px 24px rgba(0,0,0,.3); }
-  .sticker-card.uncollected {
-    background:repeating-linear-gradient(45deg,#d8d0c0,#d8d0c0 8px,#c8c0b0 8px,#c8c0b0 16px);
-    opacity:.85;
-  }
-  .sticker-card.fav-card {
-    border-color:var(--gold);
-    box-shadow:0 0 0 2px var(--gold), 0 8px 20px rgba(201,150,63,.5);
-  }
-  .sticker-card.fav-card::before {
-    content:''; position:absolute; inset:0;
-    background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.5) 45%, transparent 60%);
-    background-size:200% 200%;
-    animation:shimmer 2.5s infinite;
-    z-index:5; pointer-events:none;
-  }
-  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-  .sticker-num {
-    position:absolute; top:5px; left:6px; z-index:3;
-    background:rgba(0,0,0,.55); color:#fff; font-size:.6rem; font-weight:700;
-    padding:2px 6px; border-radius:8px; font-family:'DM Sans',sans-serif;
-  }
-  .sticker-genre-flag {
-    position:absolute; top:5px; right:6px; z-index:3;
-    background:rgba(255,255,255,.9); font-size:.85rem;
-    width:22px; height:22px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 1px 4px rgba(0,0,0,.3);
-  }
-  .sticker-cover-area {
-    position:absolute; top:24px; left:8px; right:8px; bottom:38px;
-    border-radius:6px; overflow:hidden; background:#fff;
-  }
-  .sticker-cover-area img { width:100%; height:100%; object-fit:cover; display:block; }
-  .sticker-cover-placeholder-mini {
-    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
-    padding:6px; text-align:center; font-family:'Playfair Display',serif; font-size:.55rem;
-    color:#fff; line-height:1.2;
-  }
-  .sticker-rarity-star {
-    position:absolute; bottom:38px; left:50%; transform:translateX(-50%);
-    background:var(--gold); color:#3d1f0a; font-size:.6rem; font-weight:700;
-    padding:1px 8px; border-radius:8px; z-index:3; white-space:nowrap;
-  }
-  .sticker-footer {
-    position:absolute; bottom:0; left:0; right:0; height:36px;
-    background:rgba(0,0,0,.65); display:flex; align-items:center; justify-content:center;
-    padding:2px 6px;
-  }
-  .sticker-footer span {
-    color:#fff; font-size:.58rem; font-weight:600; text-align:center;
-    line-height:1.15; overflow:hidden; text-overflow:ellipsis;
-    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-  }
-  .sticker-question {
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-size:2.5rem; color:rgba(255,255,255,.6); z-index:2;
-  }
-
-  /* ── Card detail modal ── */
-  .card-detail-body { display:flex; flex-direction:column; align-items:center; gap:20px; }
-  .card-detail-canvas-wrap { width:100%; max-width:300px; }
-  #card-detail-canvas { width:100%; height:auto; border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,.3); display:block; }
+  .leitura-vale-row button.active { background:#5a3a7a; color:#fff; border-color:#5a3a7a; }
+  .leitura-empty-msg { text-align:center; padding:30px; font-size:.85rem; color:var(--wood-mid); font-style:italic; }
 
   @media(max-width:600px){ .months-grid{grid-template-columns:1fr;gap:40px;} .stats-bar{gap:10px;} }
 </style>
@@ -422,7 +353,7 @@
   <p>Jornada de leituras</p>
   <div class="year-selector" id="year-selector"></div>
   <div class="toolbar-buttons">
-    <button class="tool-btn" onclick="openAlbumModal()">🎴 Álbum de Figurinhas</button>
+    <button class="tool-btn" onclick="openLeituraFinalizadaModal()">✨ Leitura Finalizada</button>
     <button class="tool-btn" onclick="openChartModal()">📈 Gráfico mensal</button>
     <button class="tool-btn" onclick="openWallModal()">🖼️ Parede de capas</button>
     <button class="tool-btn" onclick="openDashboard()">📊 Dashboard anual</button>
@@ -508,6 +439,44 @@
         <option>HQ / Graphic Novel</option><option>Mangá</option>
         <option>Infantil</option><option>Juvenil (YA)</option>
         <option>Clássico</option><option>Acadêmico / Didático</option><option>Outro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>País do autor <span style="font-weight:300;text-transform:none">— opcional</span></label>
+      <select id="inp-country">
+        <option value="">— selecionar —</option>
+        <option value="BR">🇧🇷 Brasil</option>
+        <option value="US">🇺🇸 Estados Unidos</option>
+        <option value="GB">🇬🇧 Reino Unido</option>
+        <option value="PT">🇵🇹 Portugal</option>
+        <option value="FR">🇫🇷 França</option>
+        <option value="DE">🇩🇪 Alemanha</option>
+        <option value="ES">🇪🇸 Espanha</option>
+        <option value="IT">🇮🇹 Itália</option>
+        <option value="JP">🇯🇵 Japão</option>
+        <option value="KR">🇰🇷 Coreia do Sul</option>
+        <option value="CN">🇨🇳 China</option>
+        <option value="RU">🇷🇺 Rússia</option>
+        <option value="CA">🇨🇦 Canadá</option>
+        <option value="MX">🇲🇽 México</option>
+        <option value="AR">🇦🇷 Argentina</option>
+        <option value="CO">🇨🇴 Colômbia</option>
+        <option value="CL">🇨🇱 Chile</option>
+        <option value="IE">🇮🇪 Irlanda</option>
+        <option value="SE">🇸🇪 Suécia</option>
+        <option value="NO">🇳🇴 Noruega</option>
+        <option value="FI">🇫🇮 Finlândia</option>
+        <option value="DK">🇩🇰 Dinamarca</option>
+        <option value="NL">🇳🇱 Holanda</option>
+        <option value="PL">🇵🇱 Polônia</option>
+        <option value="IN">🇮🇳 Índia</option>
+        <option value="AU">🇦🇺 Austrália</option>
+        <option value="NG">🇳🇬 Nigéria</option>
+        <option value="ZA">🇿🇦 África do Sul</option>
+        <option value="EG">🇪🇬 Egito</option>
+        <option value="TR">🇹🇷 Turquia</option>
+        <option value="GR">🇬🇷 Grécia</option>
+        <option value="OTHER">🌍 Outro</option>
       </select>
     </div>
     <div class="form-group">
@@ -655,35 +624,6 @@
   </div>
 </div>
 
-<!-- ── Album Modal ── -->
-<div class="fullscreen-modal" id="album-modal">
-  <div class="fs-modal-header">
-    <h2>🎴 Álbum de Figurinhas <span id="album-year-label"></span></h2>
-    <button class="fs-close" onclick="closeFullscreen('album-modal')">✕</button>
-  </div>
-  <div class="fs-modal-body">
-    <div class="album-progress-bar-wrap">
-      <div class="album-progress-text" id="album-progress-text">0 de 0 figurinhas coladas</div>
-      <div class="album-progress-track"><div class="album-progress-fill" id="album-progress-fill"></div></div>
-    </div>
-    <div class="album-grid" id="album-grid"></div>
-  </div>
-</div>
-
-<!-- ── Card Detail Modal ── -->
-<div class="fullscreen-modal" id="card-detail-modal">
-  <div class="fs-modal-header">
-    <h2>🎴 Figurinha</h2>
-    <button class="fs-close" onclick="closeFullscreen('card-detail-modal')">✕</button>
-  </div>
-  <div class="fs-modal-body card-detail-body">
-    <div class="card-detail-canvas-wrap">
-      <canvas id="card-detail-canvas" width="600" height="840"></canvas>
-    </div>
-    <button class="btn-primary" id="card-detail-download" style="max-width:300px">⬇️ Baixar Figurinha</button>
-  </div>
-</div>
-
 <!-- ── Story Generator Modal ── -->
 <div class="fullscreen-modal" id="story-modal">
   <div class="fs-modal-header">
@@ -717,6 +657,52 @@
         <div class="story-style-row" id="story-style-row"></div>
       </div>
       <button class="btn-primary" onclick="downloadStory()">⬇️ Baixar Story</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Leitura Finalizada Modal ── -->
+<div class="fullscreen-modal" id="leitura-modal">
+  <div class="fs-modal-header">
+    <h2>✨ Leitura Finalizada</h2>
+    <button class="fs-close" onclick="closeFullscreen('leitura-modal')">✕</button>
+  </div>
+  <div class="fs-modal-body">
+    <div class="form-group" style="max-width:1000px;margin:0 auto 16px;">
+      <label>Escolher livro</label>
+      <select id="leitura-book-select" onchange="onLeituraBookChange()"></select>
+    </div>
+    <div id="leitura-empty" class="leitura-empty-msg" style="display:none;">Nenhum livro cadastrado ainda em <span id="leitura-empty-year"></span>.</div>
+    <div class="leitura-modal-body" id="leitura-modal-body">
+      <div class="leitura-preview-wrap">
+        <canvas id="leitura-canvas" width="1080" height="1920"></canvas>
+      </div>
+      <div class="leitura-controls">
+        <div class="form-group">
+          <label>Minha reação <span style="font-weight:300;text-transform:none">— opcional</span></label>
+          <div class="upload-area" id="leitura-sticker-area" onclick="document.getElementById('leitura-sticker-file').click()">
+            <div id="leitura-sticker-placeholder">
+              <div class="upload-icon">🖼️</div>
+              <div class="upload-text">Adicionar sticker/reação</div>
+              <div class="upload-sub">Da galeria do celular</div>
+            </div>
+          </div>
+          <input type="file" id="leitura-sticker-file" accept="image/*" style="display:none" onchange="handleLeituraSticker(event)">
+          <button type="button" id="leitura-sticker-clear" style="display:none" class="clear-btn" onclick="clearLeituraSticker()">✕ Remover reação</button>
+        </div>
+        <div class="form-group">
+          <label>Vale a pena?</label>
+          <div class="leitura-vale-row">
+            <button type="button" id="leitura-vale-sim" onclick="setLeituraVale('sim')">👍 SIM</button>
+            <button type="button" id="leitura-vale-nao" onclick="setLeituraVale('nao')">👎 NÃO</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Resumidamente... <span style="font-weight:300;text-transform:none">— opcional</span></label>
+          <input type="text" id="leitura-resumo" placeholder="O que você achou do livro?" maxlength="120" oninput="renderLeituraCanvas()">
+        </div>
+        <button class="btn-primary" onclick="downloadLeitura()">⬇️ Baixar Story</button>
+      </div>
     </div>
   </div>
 </div>
@@ -767,241 +753,13 @@
     '_default':              { bg1:'#3d1f0a', bg2:'#6b3a1f', accent:'#c9963f', emoji:'📚' }
   };
 
-  // ── Genre emoji flags for stickers ──
-  const GENRE_FLAGS = {
-    'Romance':'💕','Terror':'🩸','Suspense / Thriller':'🔪','Mistério':'🔍','Policial':'🚓',
-    'Fantasia':'🧙','Ficção Científica':'🚀','Distopia':'⚠️','Drama':'🎭','Comédia / Humor':'😄',
-    'Ação / Aventura':'⚔️','Aventura Histórica':'🗺️','Faroeste':'🤠','Contos':'📖','Novela':'💌',
-    'Crônicas':'✍️','Erótico':'🔥','LGBTQIA+':'🏳️‍🌈','Autoajuda':'🌱','Desenvolvimento Pessoal':'🌟',
-    'Negócios':'💼','Espiritualidade / Religião':'🕊️','Saúde / Bem-estar':'🌿','Biografia':'📰',
-    'Memórias':'🕰️','História':'🏛️','Ciência':'🔬','Tecnologia':'💻','Filosofia':'🦉',
-    'Psicologia':'🧠','Sociologia / Política':'⚖️','Poesia':'🌸','Teatro':'🎭','HQ / Graphic Novel':'💥',
-    'Mangá':'🎌','Infantil':'🧸','Juvenil (YA)':'🌙','Clássico':'🏺','Acadêmico / Didático':'🎓','Outro':'📚'
+  // ── Country flags (matches inp-country select values) ──
+  const COUNTRY_FLAGS = {
+    BR:'🇧🇷', US:'🇺🇸', GB:'🇬🇧', PT:'🇵🇹', FR:'🇫🇷', DE:'🇩🇪', ES:'🇪🇸', IT:'🇮🇹',
+    JP:'🇯🇵', KR:'🇰🇷', CN:'🇨🇳', RU:'🇷🇺', CA:'🇨🇦', MX:'🇲🇽', AR:'🇦🇷', CO:'🇨🇴',
+    CL:'🇨🇱', IE:'🇮🇪', SE:'🇸🇪', NO:'🇳🇴', FI:'🇫🇮', DK:'🇩🇰', NL:'🇳🇱', PL:'🇵🇱',
+    IN:'🇮🇳', AU:'🇦🇺', NG:'🇳🇬', ZA:'🇿🇦', EG:'🇪🇬', TR:'🇹🇷', GR:'🇬🇷', OTHER:'🌍'
   };
-
-  // ── Card gradient backgrounds (cycles for visual variety) ──
-  const CARD_GRADIENTS = [
-    ['#4ad9e8','#2c8a9e'], ['#e89a4a','#c8602a'], ['#9c5fc9','#5a3a7a'],
-    ['#4ad98a','#2c8a5e'], ['#e84a6a','#9e2c4a'], ['#c9963f','#7a5a1f']
-  ];
-
-  function rarityFromStars(stars){
-    if(stars>=5) return {label:'★ LENDÁRIA', cls:'fav-card'};
-    if(stars===4) return {label:'★ ÉPICA', cls:''};
-    if(stars>=1) return {label:null, cls:''};
-    return {label:null, cls:''};
-  }
-
-  function openAlbumModal(){
-    const books=loadBooks(currentYear);
-    document.getElementById('album-year-label').textContent=currentYear;
-    const lidos=books.filter(b=>(b.status||'lido')==='lido');
-
-    document.getElementById('album-progress-text').textContent=`${lidos.length} de ${books.length||lidos.length} figurinhas coladas`;
-    const pct=books.length>0?Math.round(lidos.length/books.length*100):0;
-    document.getElementById('album-progress-fill').style.width=pct+'%';
-
-    const grid=document.getElementById('album-grid');
-    if(books.length===0){
-      grid.innerHTML='<p class="no-data" style="text-align:center;padding:40px;grid-column:1/-1">Nenhum livro cadastrado ainda em '+currentYear+'. Comece a colecionar! 🎴</p>';
-      openFullscreen('album-modal');
-      return;
-    }
-
-    // Sort by month then creation order for consistent numbering
-    const sorted=[...books].sort((a,b)=>a.month-b.month || a.id-b.id);
-
-    grid.innerHTML=sorted.map((book,idx)=>{
-      const num=String(idx+1).padStart(3,'0');
-      const isLido=(book.status||'lido')==='lido';
-      const flag=GENRE_FLAGS[book.genre]||'📚';
-      const grad=CARD_GRADIENTS[idx%CARD_GRADIENTS.length];
-      const rarity=rarityFromStars(book.stars||0);
-      const isFav=!!book.fav && isLido;
-
-      if(!isLido){
-        return `<div class="sticker-card uncollected" style="background:linear-gradient(160deg,${grad[0]},${grad[1]})" onclick="openCardDetail(${book.id})">
-          <div class="sticker-num">#${num}</div>
-          <div class="sticker-question">❓</div>
-          <div class="sticker-footer"><span>${book.status==='andamento'?'Em andamento':'Quero ler'}</span></div>
-        </div>`;
-      }
-
-      let coverHTML;
-      if(book.cover){
-        coverHTML=`<img src="${book.cover}" alt="${book.title}">`;
-      } else {
-        coverHTML=`<div class="sticker-cover-placeholder-mini" style="background:${book.color||grad[1]}">${book.title}</div>`;
-      }
-
-      return `<div class="sticker-card ${isFav?'fav-card':''}" style="background:linear-gradient(160deg,${grad[0]},${grad[1]})" onclick="openCardDetail(${book.id})">
-        <div class="sticker-num">#${num}</div>
-        <div class="sticker-genre-flag">${flag}</div>
-        <div class="sticker-cover-area">${coverHTML}</div>
-        ${rarity.label?`<div class="sticker-rarity-star">${rarity.label}</div>`:''}
-        <div class="sticker-footer"><span>${book.title}</span></div>
-      </div>`;
-    }).join('');
-
-    openFullscreen('album-modal');
-  }
-
-  let cardDetailBook=null;
-  function openCardDetail(bookId){
-    const books=loadBooks(currentYear);
-    const book=books.find(b=>b.id===bookId);
-    if(!book) return;
-    cardDetailBook=book;
-    openFullscreen('card-detail-modal');
-    setTimeout(()=>renderCardDetail(book), 50);
-  }
-
-  function renderCardDetail(book){
-    const canvas=document.getElementById('card-detail-canvas');
-    const ctx=canvas.getContext('2d');
-    const W=600,H=840;
-    const isLido=(book.status||'lido')==='lido';
-    const idx=loadBooks(currentYear).sort((a,b)=>a.month-b.month||a.id-b.id).findIndex(b=>b.id===book.id);
-    const num=String(idx+1).padStart(3,'0');
-    const grad=CARD_GRADIENTS[idx%CARD_GRADIENTS.length];
-    const flag=GENRE_FLAGS[book.genre]||'📚';
-
-    // Background
-    const bgGrad=ctx.createLinearGradient(0,0,W,H);
-    bgGrad.addColorStop(0,grad[0]); bgGrad.addColorStop(1,grad[1]);
-    ctx.fillStyle=bgGrad;
-    roundRectPath(ctx,0,0,W,H,28);
-    ctx.fill();
-
-    // White border inset
-    ctx.strokeStyle='rgba(255,255,255,.8)';
-    ctx.lineWidth=6;
-    roundRectPath(ctx,10,10,W-20,H-20,22);
-    ctx.stroke();
-
-    if(!isLido){
-      // Uncollected pattern
-      ctx.save();
-      roundRectPath(ctx,0,0,W,H,28);
-      ctx.clip();
-      ctx.strokeStyle='rgba(0,0,0,.08)';
-      ctx.lineWidth=14;
-      for(let i=-H;i<W;i+=28){
-        ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i+H,H); ctx.stroke();
-      }
-      ctx.restore();
-
-      ctx.fillStyle='rgba(0,0,0,.5)';
-      ctx.font='800 30px DM Sans, sans-serif';
-      ctx.textAlign='left';
-      ctx.fillText('#'+num, 30, 50);
-
-      ctx.font='160px Arial';
-      ctx.textAlign='center';
-      ctx.fillStyle='rgba(255,255,255,.7)';
-      ctx.fillText('❓', W/2, H/2+50);
-
-      ctx.font='600 28px DM Sans, sans-serif';
-      ctx.fillStyle='#fff';
-      ctx.fillText(book.status==='andamento'?'📖 Em andamento':'🔖 Quero ler', W/2, H-60);
-      document.getElementById('card-detail-download').onclick=()=>downloadCardCanvas(book);
-      return;
-    }
-
-    // Number badge
-    ctx.fillStyle='rgba(0,0,0,.55)';
-    roundRectPath(ctx,24,24,70,34,10);
-    ctx.fill();
-    ctx.fillStyle='#fff';
-    ctx.font='700 20px DM Sans, sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText('#'+num, 59, 47);
-
-    // Genre flag badge
-    ctx.fillStyle='rgba(255,255,255,.92)';
-    ctx.beginPath(); ctx.arc(W-55,41,26,0,Math.PI*2); ctx.fill();
-    ctx.font='28px Arial';
-    ctx.fillText(flag, W-55, 51);
-
-    const finishCard=()=>{
-      // Rarity badge
-      if((book.stars||0)>=4){
-        const rarityLabel=(book.stars>=5)?'★ LENDÁRIA':'★ ÉPICA';
-        ctx.fillStyle='#c9963f';
-        roundRectPath(ctx,W/2-90,560,180,32,16);
-        ctx.fill();
-        ctx.fillStyle='#3d1f0a';
-        ctx.font='800 18px DM Sans, sans-serif';
-        ctx.textAlign='center';
-        ctx.fillText(rarityLabel, W/2, 582);
-      }
-
-      // Footer bar
-      ctx.fillStyle='rgba(0,0,0,.7)';
-      roundRectPath(ctx,16,H-130,W-32,108,14);
-      ctx.fill();
-
-      ctx.fillStyle='#fff';
-      ctx.font='italic 700 26px Playfair Display, serif';
-      ctx.textAlign='center';
-      wrapText(ctx, book.title, W/2, H-95, W-70, 30);
-
-      if(book.author){
-        ctx.font='400 18px DM Sans, sans-serif';
-        ctx.fillStyle='rgba(255,255,255,.8)';
-        ctx.fillText('por '+book.author, W/2, H-40);
-      }
-
-      if(book.stars>0){
-        ctx.font='20px Arial';
-        ctx.fillStyle='#e8c860';
-        ctx.fillText('★'.repeat(book.stars)+'☆'.repeat(5-book.stars), W/2, H-18);
-      }
-
-      // PANINI-style brand corner
-      ctx.fillStyle='rgba(255,255,255,.85)';
-      ctx.font='800 13px DM Sans, sans-serif';
-      ctx.textAlign='left';
-      ctx.fillText('MINHA ESTANTE', 24, H-15);
-
-      document.getElementById('card-detail-download').onclick=()=>downloadCardCanvas(book);
-    };
-
-    // Cover area
-    const coverX=60, coverY=80, coverW=W-120, coverH=460;
-    if(book.cover){
-      const im=new Image();
-      im.onload=()=>{
-        roundRectPath(ctx,coverX,coverY,coverW,coverH,12);
-        ctx.save(); ctx.clip();
-        const ir=im.width/im.height, cr=coverW/coverH;
-        let sx=0,sy=0,sw=im.width,sh=im.height;
-        if(ir>cr){ sw=im.height*cr; sx=(im.width-sw)/2; } else { sh=im.width/cr; sy=(im.height-sh)/2; }
-        ctx.drawImage(im,sx,sy,sw,sh,coverX,coverY,coverW,coverH);
-        ctx.restore();
-        finishCard();
-      };
-      im.src=book.cover;
-    } else {
-      ctx.fillStyle=book.color||grad[1];
-      roundRectPath(ctx,coverX,coverY,coverW,coverH,12);
-      ctx.fill();
-      ctx.fillStyle='#fff';
-      ctx.font='italic 600 26px Playfair Display, serif';
-      ctx.textAlign='center';
-      wrapText(ctx, book.title, W/2, coverY+coverH/2, coverW-60, 32);
-      finishCard();
-    }
-  }
-
-  function downloadCardCanvas(book){
-    const canvas=document.getElementById('card-detail-canvas');
-    const link=document.createElement('a');
-    const safeTitle=(book.title||'figurinha').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
-    link.download=`figurinha-${safeTitle}.png`;
-    link.href=canvas.toDataURL('image/png');
-    link.click();
-  }
 
   let storyBook=null, storyImage=null, storyStyleKey=null;
 
@@ -1138,11 +896,28 @@
       if(storyBook.cover){
         const im=new Image();
         im.onload=()=>{
-          // cover image - object-fit cover
-          const ir=im.width/im.height, cr=coverW/coverH;
-          let sx=0,sy=0,sw=im.width,sh=im.height;
-          if(ir>cr){ sw=im.height*cr; sx=(im.width-sw)/2; } else { sh=im.width/cr; sy=(im.height-sh)/2; }
-          ctx.drawImage(im,sx,sy,sw,sh,coverX,coverY,coverW,coverH);
+          // object-fit: cover math — crop the LARGER dimension to match target ratio
+          const targetRatio=coverW/coverH;
+          const imgRatio=im.naturalWidth/im.naturalHeight;
+          let sx=0, sy=0, sw=im.naturalWidth, sh=im.naturalHeight;
+          if(imgRatio > targetRatio){
+            sw = im.naturalHeight * targetRatio;
+            sx = (im.naturalWidth - sw) / 2;
+          } else {
+            sh = im.naturalWidth / targetRatio;
+            sy = (im.naturalHeight - sh) / 2;
+          }
+          ctx.drawImage(im, sx, sy, sw, sh, coverX, coverY, coverW, coverH);
+          ctx.restore();
+          drawTextBlock();
+        };
+        im.onerror=()=>{
+          ctx.fillStyle=storyBook.color||style.bg1;
+          ctx.fillRect(coverX,coverY,coverW,coverH);
+          ctx.fillStyle='#fff';
+          ctx.font='italic 600 40px Playfair Display, serif';
+          ctx.textAlign='center';
+          wrapText(ctx, storyBook.title, W/2, coverY+coverH/2, coverW-80, 50);
           ctx.restore();
           drawTextBlock();
         };
@@ -1243,6 +1018,243 @@
     const link=document.createElement('a');
     const safeTitle=(storyBook.title||'livro').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
     link.download=`story-${safeTitle}.png`;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  // ── Leitura Finalizada ──
+  let leituraBook=null, leituraSticker=null, leituraVale=null;
+
+  function openLeituraFinalizadaModal(){
+    const books=loadBooks(currentYear);
+    const select=document.getElementById('leitura-book-select');
+    const emptyMsg=document.getElementById('leitura-empty');
+    const body=document.getElementById('leitura-modal-body');
+
+    if(books.length===0){
+      document.getElementById('leitura-empty-year').textContent=currentYear;
+      emptyMsg.style.display='block';
+      body.style.display='none';
+      select.innerHTML='';
+      openFullscreen('leitura-modal');
+      return;
+    }
+    emptyMsg.style.display='none';
+    body.style.display='flex';
+
+    const sorted=[...books].sort((a,b)=>a.month-b.month || a.id-b.id);
+    select.innerHTML=sorted.map(b=>`<option value="${b.id}">${b.title}${b.author?' — '+b.author:''}</option>`).join('');
+
+    leituraSticker=null; leituraVale=null;
+    document.getElementById('leitura-resumo').value='';
+    document.getElementById('leitura-sticker-placeholder').style.display='';
+    document.getElementById('leitura-sticker-clear').style.display='none';
+    document.getElementById('leitura-sticker-file').value='';
+    updateLeituraValeButtons();
+
+    leituraBook=sorted[0];
+    select.value=String(leituraBook.id);
+    openFullscreen('leitura-modal');
+    setTimeout(renderLeituraCanvas, 50);
+  }
+
+  function onLeituraBookChange(){
+    const id=parseInt(document.getElementById('leitura-book-select').value,10);
+    const books=loadBooks(currentYear);
+    leituraBook=books.find(b=>b.id===id)||leituraBook;
+    renderLeituraCanvas();
+  }
+
+  function handleLeituraSticker(e){
+    const f=e.target.files[0];
+    if(!f) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const im=new Image();
+      im.onload=()=>{
+        leituraSticker=im;
+        document.getElementById('leitura-sticker-placeholder').style.display='none';
+        document.getElementById('leitura-sticker-clear').style.display='inline-block';
+        renderLeituraCanvas();
+      };
+      im.src=ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  }
+  function clearLeituraSticker(){
+    leituraSticker=null;
+    document.getElementById('leitura-sticker-file').value='';
+    document.getElementById('leitura-sticker-placeholder').style.display='';
+    document.getElementById('leitura-sticker-clear').style.display='none';
+    renderLeituraCanvas();
+  }
+
+  function setLeituraVale(v){
+    leituraVale = (leituraVale===v) ? null : v;
+    updateLeituraValeButtons();
+    renderLeituraCanvas();
+  }
+  function updateLeituraValeButtons(){
+    document.getElementById('leitura-vale-sim').classList.toggle('active', leituraVale==='sim');
+    document.getElementById('leitura-vale-nao').classList.toggle('active', leituraVale==='nao');
+  }
+
+  function renderLeituraCanvas(){
+    if(!leituraBook) return;
+    const canvas=document.getElementById('leitura-canvas');
+    const ctx=canvas.getContext('2d');
+    const W=1080,H=1920;
+    const bg1='#2A1B36', bg2='#1D1226', gold='#D4AF37', lilac='#B48CC7', cream='#F3E6C9';
+
+    const grad=ctx.createLinearGradient(0,0,W,H);
+    grad.addColorStop(0,bg1); grad.addColorStop(1,bg2);
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,W,H);
+
+    // Header
+    ctx.fillStyle=gold;
+    ctx.font='800 54px DM Sans, sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('LEITURA', W/2, 130);
+    ctx.font='italic 500 40px Playfair Display, serif';
+    ctx.fillStyle=cream;
+    ctx.fillText('finalizada ✦', W/2, 185);
+
+    const coverW=560, coverH=820;
+    const coverX=(W-coverW)/2, coverY=250;
+
+    const drawRest=()=>{
+      // Sticker/reação overlay
+      if(leituraSticker){
+        const figSize=190;
+        const fx=coverX+coverW-figSize+30, fy=coverY+coverH-figSize+30;
+        ctx.save();
+        ctx.shadowColor='rgba(0,0,0,0.5)';
+        ctx.shadowBlur=20;
+        ctx.beginPath();
+        ctx.arc(fx+figSize/2, fy+figSize/2, figSize/2, 0, Math.PI*2);
+        ctx.fillStyle='#fff';
+        ctx.fill();
+        ctx.restore();
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(fx+figSize/2, fy+figSize/2, figSize/2-8, 0, Math.PI*2);
+        ctx.clip();
+        const ir=leituraSticker.width/leituraSticker.height;
+        let dw=figSize-16, dh=figSize-16, dx=fx+8, dy=fy+8;
+        if(ir>1){ dh=dw/ir; dy=fy+8+(figSize-16-dh)/2; } else { dw=dh*ir; dx=fx+8+(figSize-16-dw)/2; }
+        ctx.drawImage(leituraSticker, dx, dy, dw, dh);
+        ctx.restore();
+      }
+
+      let ty=coverY+coverH+90;
+
+      ctx.fillStyle='#fff';
+      ctx.font='italic 700 50px Playfair Display, serif';
+      ctx.textAlign='center';
+      const titleLines=wrapText(ctx, leituraBook.title, W/2, ty, 900, 58);
+      ty += titleLines*58 + 8;
+
+      if(leituraBook.author){
+        ctx.font='400 32px DM Sans, sans-serif';
+        ctx.fillStyle=lilac;
+        ctx.fillText('por '+leituraBook.author, W/2, ty);
+        ty+=55;
+      }
+
+      // Stats row: páginas + tempo de leitura
+      let stats=[];
+      if(leituraBook.pages) stats.push(`📄 ${leituraBook.pages.toLocaleString('pt-BR')} págs`);
+      if(leituraBook.start && leituraBook.end){
+        const days=Math.ceil((new Date(leituraBook.end)-new Date(leituraBook.start))/86400000);
+        stats.push(`⏱ ${days} dia${days===1?'':'s'}`);
+      }
+      if(stats.length){
+        ctx.font='500 30px DM Sans, sans-serif';
+        ctx.fillStyle=cream;
+        ctx.fillText(stats.join('   •   '), W/2, ty);
+        ty+=60;
+      }
+
+      if(leituraBook.stars>0){
+        ctx.font='42px Arial';
+        ctx.fillStyle=gold;
+        ctx.fillText('★'.repeat(leituraBook.stars)+'☆'.repeat(5-leituraBook.stars), W/2, ty);
+        ty+=65;
+      }
+
+      if(leituraVale){
+        ctx.font='700 30px DM Sans, sans-serif';
+        ctx.fillStyle= leituraVale==='sim' ? '#8FAA5E' : '#C97B63';
+        ctx.fillText(leituraVale==='sim' ? '👍 Vale a pena' : '👎 Não vale a pena', W/2, ty);
+        ty+=55;
+      }
+
+      const resumo=document.getElementById('leitura-resumo').value.trim();
+      if(resumo){
+        ctx.font='italic 400 32px Playfair Display, serif';
+        ctx.fillStyle='rgba(243,230,201,0.9)';
+        wrapText(ctx, '"'+resumo+'"', W/2, ty+10, 820, 44);
+      }
+
+      ctx.font='500 26px DM Sans, sans-serif';
+      ctx.fillStyle='rgba(232,220,200,0.6)';
+      ctx.fillText('@AMenteLeitora', W/2, H-60);
+    };
+
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,0.5)';
+    ctx.shadowBlur=40;
+    ctx.shadowOffsetY=20;
+    roundRectPath(ctx,coverX,coverY,coverW,coverH,16);
+    ctx.fillStyle='#fff';
+    ctx.fill();
+    ctx.restore();
+
+    roundRectPath(ctx,coverX,coverY,coverW,coverH,16);
+    ctx.save();
+    ctx.clip();
+
+    if(leituraBook.cover){
+      const im=new Image();
+      im.onload=()=>{
+        const targetRatio=coverW/coverH;
+        const imgRatio=im.naturalWidth/im.naturalHeight;
+        let sx=0, sy=0, sw=im.naturalWidth, sh=im.naturalHeight;
+        if(imgRatio>targetRatio){ sw=im.naturalHeight*targetRatio; sx=(im.naturalWidth-sw)/2; }
+        else { sh=im.naturalWidth/targetRatio; sy=(im.naturalHeight-sh)/2; }
+        ctx.drawImage(im, sx, sy, sw, sh, coverX, coverY, coverW, coverH);
+        ctx.restore();
+        drawRest();
+      };
+      im.onerror=()=>{
+        ctx.fillStyle=leituraBook.color||bg1;
+        ctx.fillRect(coverX,coverY,coverW,coverH);
+        ctx.fillStyle='#fff';
+        ctx.font='italic 600 40px Playfair Display, serif';
+        ctx.textAlign='center';
+        wrapText(ctx, leituraBook.title, W/2, coverY+coverH/2, coverW-80, 50);
+        ctx.restore();
+        drawRest();
+      };
+      im.src=leituraBook.cover;
+    } else {
+      ctx.fillStyle=leituraBook.color||bg1;
+      ctx.fillRect(coverX,coverY,coverW,coverH);
+      ctx.fillStyle='#fff';
+      ctx.font='italic 600 40px Playfair Display, serif';
+      ctx.textAlign='center';
+      wrapText(ctx, leituraBook.title, W/2, coverY+coverH/2, coverW-80, 50);
+      ctx.restore();
+      drawRest();
+    }
+  }
+
+  function downloadLeitura(){
+    const canvas=document.getElementById('leitura-canvas');
+    const link=document.createElement('a');
+    const safeTitle=(leituraBook.title||'livro').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
+    link.download=`leitura-finalizada-${safeTitle}.png`;
     link.href=canvas.toDataURL('image/png');
     link.click();
   }
@@ -1598,6 +1610,7 @@
     addingMonth=month; uploadedBase64=null; activeTab='upload';
     ['inp-title','inp-author','inp-cover','inp-start','inp-end','inp-pages'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('inp-genre').value='';
+    document.getElementById('inp-country').value='';
     document.getElementById('inp-status').value='lido';
     document.getElementById('inp-progress-current').value='';
     document.getElementById('inp-progress-total').value='';
@@ -1625,9 +1638,7 @@
       books[idx].month=newMonth;
       addingMonth=newMonth;
       saveBooks(currentYear,books);
-      // Update select to reflect move
       document.getElementById('inp-move-month').value=newMonth;
-      // Visual feedback
       const btn=document.querySelector('.btn-move');
       btn.textContent='✓ Movido!'; btn.style.background='#3a5c3a';
       setTimeout(()=>{ btn.textContent='↪ Mover'; btn.style.background=''; },1800);
@@ -1644,6 +1655,7 @@
     document.getElementById('inp-title').value=book.title||'';
     document.getElementById('inp-author').value=book.author||'';
     document.getElementById('inp-genre').value=book.genre||'';
+    document.getElementById('inp-country').value=book.country||'';
     document.getElementById('inp-start').value=book.start||'';
     document.getElementById('inp-end').value=book.end||'';
     document.getElementById('inp-pages').value=book.pages||'';
@@ -1653,17 +1665,14 @@
     updateProgressLabel();
     document.getElementById('progress-group').style.display=(book.status==='andamento')?'':'none';
     document.getElementById('inp-fav').checked=!!book.fav;
-    // Show move month field and set to current month
     document.getElementById('move-month-group').style.display='block';
     document.getElementById('inp-move-month').value=book.month;
 
-    // Stars
     selectedStars=book.stars||0;
     document.querySelectorAll('#star-row .star-btn').forEach(b=>{
       b.classList.toggle('active', parseInt(b.dataset.v)<=selectedStars);
     });
 
-    // Cover
     clearUpload();
     if(book.cover){
       document.getElementById('tab-upload').style.display='none';
@@ -1702,7 +1711,7 @@
     const progTotal=status==='andamento'?(parseInt(document.getElementById('inp-progress-total').value)||0):0;
     const progress=status==='andamento'?(progTotal>0?Math.min(100,Math.round(progCurrent/progTotal*100)):0):(status==='lido'?100:0);
     const fav=document.getElementById('inp-fav').checked;
-    const book={ id:Date.now(), title, author:document.getElementById('inp-author').value.trim(), genre:document.getElementById('inp-genre').value, cover:getCurrentCover(), start:document.getElementById('inp-start').value, end:document.getElementById('inp-end').value, pages:parseInt(document.getElementById('inp-pages').value)||0, color:selectedColor, month:addingMonth, status, progress, progressCurrent:progCurrent, progressTotal:progTotal, stars:selectedStars, fav };
+    const book={ id:Date.now(), title, author:document.getElementById('inp-author').value.trim(), genre:document.getElementById('inp-genre').value, country:document.getElementById('inp-country').value, cover:getCurrentCover(), start:document.getElementById('inp-start').value, end:document.getElementById('inp-end').value, pages:parseInt(document.getElementById('inp-pages').value)||0, color:selectedColor, month:addingMonth, status, progress, progressCurrent:progCurrent, progressTotal:progTotal, stars:selectedStars, fav };
     const books=loadBooks(currentYear);
     if(editingId){
       const idx=books.findIndex(b=>b.id===editingId);
@@ -1746,7 +1755,6 @@
     document.getElementById('total-pages').textContent=pages.toLocaleString('pt-BR');
     document.getElementById('best-month').textContent=bestIdx>=0?MONTHS[bestIdx].slice(0,3):'—';
 
-    // Status breakdown
     const countLido=books.filter(b=>(b.status||'lido')==='lido').length;
     const countAndamento=books.filter(b=>b.status==='andamento').length;
     const countQuero=books.filter(b=>b.status==='quero').length;
@@ -1793,7 +1801,6 @@
           if(book.pages) meta.innerHTML+=`<div>${book.pages.toLocaleString('pt-BR')} pág.</div>`;
           card.appendChild(meta);
 
-          // Status badge
           const status=book.status||'lido';
           const badgeMap={lido:['✅','status-lido'],andamento:['📖','status-andamento'],quero:['🔖','status-quero']};
           const [badgeIcon,badgeClass]=badgeMap[status];
@@ -1802,7 +1809,6 @@
           badge.textContent=badgeIcon;
           card.appendChild(badge);
 
-          // Progress overlay for "em andamento"
           if(status==='andamento' && book.progress>0){
             const overlay=document.createElement('div'); overlay.className='progress-overlay';
             overlay.innerHTML=`<div class="progress-bar-cover"><div class="progress-bar-fill" style="width:${book.progress}%"></div></div><div class="progress-pct">${book.progress}%</div>`;
@@ -1811,23 +1817,20 @@
           const popup=document.createElement('div'); popup.className='book-info-popup';
           const statusLabel={lido:'✅ Lido',andamento:'📖 Em andamento',quero:'🔖 Quero ler'}[status];
           const progressHTML=(status==='andamento'&&book.progress>0)?`<div class="popup-progress">📊 ${book.progressCurrent||0} de ${book.progressTotal||0} páginas — ${book.progress}%<div class="popup-progress-bar"><div class="popup-progress-fill" style="width:${book.progress}%"></div></div></div>`:'';
-          popup.innerHTML=`<div class="popup-title">${book.title}</div>${book.author?`<div class="popup-author">por ${book.author}</div>`:''}${book.genre?`<div class="popup-genre">📖 ${book.genre}</div>`:''}<div class="popup-dates">${startFmt!=='—'?`📅 ${startFmt} → ${endFmt}`:''}${daysRead?`<br>⏱ ${daysRead}`:''}</div>${book.pages?`<div class="popup-pages">📄 ${book.pages.toLocaleString('pt-BR')} páginas</div>`:''}${progressHTML}${book.stars?`<div class="popup-stars">${'★'.repeat(book.stars)+'☆'.repeat(5-book.stars)}</div>`:''}${book.fav?'<div class="popup-fav">❤️ Favorito do mês</div>':'' }<div style="font-size:.65rem;opacity:.6;margin-top:4px">${statusLabel}</div>`;
+          popup.innerHTML=`<div class="popup-title">${book.title}</div>${book.author?`<div class="popup-author">por ${book.author}</div>`:''}${book.genre?`<div class="popup-genre">📖 ${book.genre}${book.country&&COUNTRY_FLAGS[book.country]?' '+COUNTRY_FLAGS[book.country]:''}</div>`:''}<div class="popup-dates">${startFmt!=='—'?`📅 ${startFmt} → ${endFmt}`:''}${daysRead?`<br>⏱ ${daysRead}`:''}</div>${book.pages?`<div class="popup-pages">📄 ${book.pages.toLocaleString('pt-BR')} páginas</div>`:''}${progressHTML}${book.stars?`<div class="popup-stars">${'★'.repeat(book.stars)+'☆'.repeat(5-book.stars)}</div>`:''}${book.fav?'<div class="popup-fav">❤️ Favorito do mês</div>':'' }<div style="font-size:.65rem;opacity:.6;margin-top:4px">${statusLabel}</div>`;
           card.appendChild(popup);
-          // Fav badge
           if(book.fav){
             const favBadge=document.createElement('div'); favBadge.className='fav-badge'; favBadge.textContent='❤️'; card.appendChild(favBadge);
           }
-          // Stars below cover
           if(book.stars>0){
             const starsEl=document.createElement('div'); starsEl.className='stars-display';
             starsEl.textContent='★'.repeat(book.stars)+'☆'.repeat(5-book.stars); meta.appendChild(starsEl);
           }
+          const storyBtn=document.createElement('button'); storyBtn.className='story-btn'; storyBtn.title='Gerar Story'; storyBtn.textContent='📸';
+          storyBtn.onclick=e=>{ e.stopPropagation(); openStoryModal(book); };
+          card.appendChild(storyBtn);
           const rm=document.createElement('button'); rm.className='remove-btn'; rm.title='Remover'; rm.textContent='✕';
           rm.onclick=e=>{ e.stopPropagation(); removeBook(book.id); }; card.appendChild(rm);
-
-          const storyBtn=document.createElement('button'); storyBtn.className='story-btn'; storyBtn.title='Gerar Story'; storyBtn.textContent='📸';
-          storyBtn.onclick=e=>{ e.stopPropagation(); openStoryModal(book); }; card.appendChild(storyBtn);
-
           row.appendChild(card);
         });
       }
