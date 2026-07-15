@@ -679,6 +679,18 @@
       </div>
       <div class="leitura-controls">
         <div class="form-group">
+          <label>Capa em melhor qualidade <span style="font-weight:300;text-transform:none">— opcional</span></label>
+          <div class="upload-area" id="leitura-hq-area" onclick="document.getElementById('leitura-hq-file').click()">
+            <div id="leitura-hq-placeholder">
+              <div class="upload-icon">📷</div>
+              <div class="upload-text">Enviar foto nítida da capa</div>
+              <div class="upload-sub">A capa salva na estante é comprimida; use isso pra um resultado mais nítido</div>
+            </div>
+          </div>
+          <input type="file" id="leitura-hq-file" accept="image/*" style="display:none" onchange="handleLeituraHQCover(event)">
+          <button type="button" id="leitura-hq-clear" style="display:none" class="clear-btn" onclick="clearLeituraHQCover()">✕ Usar capa original</button>
+        </div>
+        <div class="form-group">
           <label>Minha reação <span style="font-weight:300;text-transform:none">— opcional</span></label>
           <div class="upload-area" id="leitura-sticker-area" onclick="document.getElementById('leitura-sticker-file').click()">
             <div id="leitura-sticker-placeholder">
@@ -895,6 +907,7 @@
 
       if(storyBook.cover){
         const im=new Image();
+        im.crossOrigin='anonymous';
         im.onload=()=>{
           // object-fit: cover math — crop the LARGER dimension to match target ratio
           const targetRatio=coverW/coverH;
@@ -1015,15 +1028,21 @@
 
   function downloadStory(){
     const canvas=document.getElementById('story-canvas');
-    const link=document.createElement('a');
-    const safeTitle=(storyBook.title||'livro').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
-    link.download=`story-${safeTitle}.png`;
-    link.href=canvas.toDataURL('image/png');
-    link.click();
+    try{
+      const link=document.createElement('a');
+      const safeTitle=(storyBook.title||'livro').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
+      link.download=`story-${safeTitle}.png`;
+      link.href=canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }catch(e){
+      alert('⚠️ Não deu pra baixar essa imagem porque a capa veio de um link externo que bloqueia esse tipo de exportação. Tente usar uma capa enviada da galeria (aba "Do dispositivo") em vez de URL.');
+    }
   }
 
   // ── Leitura Finalizada ──
-  let leituraBook=null, leituraSticker=null, leituraVale=null;
+  let leituraBook=null, leituraSticker=null, leituraVale=null, leituraHQCover=null;
 
   function openLeituraFinalizadaModal(){
     const books=loadBooks(currentYear);
@@ -1045,11 +1064,14 @@
     const sorted=[...books].sort((a,b)=>a.month-b.month || a.id-b.id);
     select.innerHTML=sorted.map(b=>`<option value="${b.id}">${b.title}${b.author?' — '+b.author:''}</option>`).join('');
 
-    leituraSticker=null; leituraVale=null;
+    leituraSticker=null; leituraVale=null; leituraHQCover=null;
     document.getElementById('leitura-resumo').value='';
     document.getElementById('leitura-sticker-placeholder').style.display='';
     document.getElementById('leitura-sticker-clear').style.display='none';
     document.getElementById('leitura-sticker-file').value='';
+    document.getElementById('leitura-hq-placeholder').style.display='';
+    document.getElementById('leitura-hq-clear').style.display='none';
+    document.getElementById('leitura-hq-file').value='';
     updateLeituraValeButtons();
 
     leituraBook=sorted[0];
@@ -1062,6 +1084,34 @@
     const id=parseInt(document.getElementById('leitura-book-select').value,10);
     const books=loadBooks(currentYear);
     leituraBook=books.find(b=>b.id===id)||leituraBook;
+    leituraHQCover=null;
+    document.getElementById('leitura-hq-placeholder').style.display='';
+    document.getElementById('leitura-hq-clear').style.display='none';
+    document.getElementById('leitura-hq-file').value='';
+    renderLeituraCanvas();
+  }
+
+  function handleLeituraHQCover(e){
+    const f=e.target.files[0];
+    if(!f) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const im=new Image();
+      im.onload=()=>{
+        leituraHQCover=im;
+        document.getElementById('leitura-hq-placeholder').style.display='none';
+        document.getElementById('leitura-hq-clear').style.display='inline-block';
+        renderLeituraCanvas();
+      };
+      im.src=ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  }
+  function clearLeituraHQCover(){
+    leituraHQCover=null;
+    document.getElementById('leitura-hq-file').value='';
+    document.getElementById('leitura-hq-placeholder').style.display='';
+    document.getElementById('leitura-hq-clear').style.display='none';
     renderLeituraCanvas();
   }
 
@@ -1214,9 +1264,22 @@
     roundRectPath(ctx,coverX,coverY,coverW,coverH,16);
     ctx.save();
     ctx.clip();
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
 
-    if(leituraBook.cover){
+    if(leituraHQCover){
+      const im=leituraHQCover;
+      const targetRatio=coverW/coverH;
+      const imgRatio=im.naturalWidth/im.naturalHeight;
+      let sx=0, sy=0, sw=im.naturalWidth, sh=im.naturalHeight;
+      if(imgRatio>targetRatio){ sw=im.naturalHeight*targetRatio; sx=(im.naturalWidth-sw)/2; }
+      else { sh=im.naturalWidth/targetRatio; sy=(im.naturalHeight-sh)/2; }
+      ctx.drawImage(im, sx, sy, sw, sh, coverX, coverY, coverW, coverH);
+      ctx.restore();
+      drawRest();
+    } else if(leituraBook.cover){
       const im=new Image();
+      im.crossOrigin='anonymous';
       im.onload=()=>{
         const targetRatio=coverW/coverH;
         const imgRatio=im.naturalWidth/im.naturalHeight;
@@ -1252,11 +1315,17 @@
 
   function downloadLeitura(){
     const canvas=document.getElementById('leitura-canvas');
-    const link=document.createElement('a');
-    const safeTitle=(leituraBook.title||'livro').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
-    link.download=`leitura-finalizada-${safeTitle}.png`;
-    link.href=canvas.toDataURL('image/png');
-    link.click();
+    try{
+      const link=document.createElement('a');
+      const safeTitle=(leituraBook.title||'livro').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
+      link.download=`leitura-finalizada-${safeTitle}.png`;
+      link.href=canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }catch(e){
+      alert('⚠️ Não deu pra baixar essa imagem porque a capa veio de um link externo que bloqueia esse tipo de exportação. Tente usar uma capa enviada da galeria (aba "Do dispositivo") em vez de URL.');
+    }
   }
 
   // ── Theme definitions ──
@@ -1832,22 +1901,4 @@
           const rm=document.createElement('button'); rm.className='remove-btn'; rm.title='Remover'; rm.textContent='✕';
           rm.onclick=e=>{ e.stopPropagation(); removeBook(book.id); }; card.appendChild(rm);
           row.appendChild(card);
-        });
-      }
-      const addBtn=document.createElement('button'); addBtn.className='add-book-btn'; addBtn.title='Adicionar em '+month; addBtn.textContent='+'; addBtn.onclick=()=>openModal(mi); row.appendChild(addBtn);
-    });
-    if(editMode) grid.classList.add('edit-mode');
-  }
-
-  document.getElementById('modal-overlay').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-overlay')) closeModal(); });
-
-  /* ── Service Worker ── */
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  }
-
-  applyTheme(localStorage.getItem('shelf_theme')||'classic');
-  buildYearSelector(); render();
-</script>
-</body>
-</html>
+   
